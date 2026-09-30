@@ -13,7 +13,7 @@ forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
     number = 1
 [[tests]]
     name = "path_max.cpp"
-    number = 2
+    number = 1
 [[tests]]
     name = "cycle_max.cpp"
     number = 1
@@ -28,28 +28,28 @@ forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
     number = 4
 [[tests]]
     name = "complete_bipartite.cpp"
-    number = 6
+    number = 5
 [[tests]]
     name = "ladder_family.cpp"
-    number = 4
+    number = 3
 [[tests]]
     name = "grid.cpp"
-    number = 4
+    number = 3
 [[tests]]
     name = "triangulation.cpp"
-    number = 6
+    number = 5
 [[tests]]
     name = "sparse_planar_plus_edges.cpp"
     number = 4
 [[tests]]
     name = "apollonian.cpp"
-    number = 2
+    number = 1
 [[tests]]
     name = "outerplanar.cpp"
     number = 4
 [[tests]]
     name = "two_tree.cpp"
-    number = 2
+    number = 1
 [[tests]]
     name = "cactus.cpp"
     number = 2
@@ -76,7 +76,7 @@ forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
     number = 4
 [[tests]]
     name = "many_components.cpp"
-    number = 4
+    number = 3
 [[tests]]
     name = "ordering.cpp"
     number = 8

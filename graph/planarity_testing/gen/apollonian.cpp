@@ -1,15 +1,12 @@
-// Random Apollonian networks (stacked triangulations, maximal planar, Yes);
-// odd seeds add one random non-edge (No).
+// Random Apollonian network (stacked triangulation, maximal planar, Yes).
 #include "planar_gen.h"
 #include "../params.h"
 
 int main(int, char* argv[]) {
 	long long seed = atoll(argv[1]);
 	Random gen(seed);
-	int ns[] = {333335, 333334};
-	int n = ns[seed % 2];
+	int n = 333335;
 	Graph g = random_apollonian(gen, n);
-	if (seed % 2 == 1) add_random_nonedges(gen, g, 1);
 	assert(int(g.edges.size()) <= M_MAX);
 	print_graph(gen, g);
 	return 0;
