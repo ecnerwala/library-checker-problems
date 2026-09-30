@@ -1,7 +1,3 @@
-// Wrong: copy of networkx_lr_planarity.cpp that assumes the graph is
-// connected; only the component containing vertex 0 is tested and embedded,
-// other components are printed in input order and assumed planar.
-//
 // Independent cross-check: the left-right planarity test and embedding
 // (U. Brandes, "The Left-Right Planarity Test", 2009), translated statement
 // by statement from the iterative implementation in networkx 3.7,
@@ -359,7 +355,7 @@ struct LRPlanarity {
 		//                 self.height[v] = 0
 		//                 self.roots.append(v)
 		//                 self.dfs_orientation(v)
-		for (int v = 0; v < 1; v++) {
+		for (int v = 0; v < N; v++) {
 			if (height[v] == -1) {
 				height[v] = 0;
 				roots.push_back(v);
@@ -372,6 +368,7 @@ struct LRPlanarity {
 		//         self.lowpt2 = None
 		//         self.adjs = None
 		lowpt2.clear();
+		adjs.clear();
 
 		//         # testing
 		//         for v in self.DG:  # sort the adjacency lists by nesting depth
@@ -963,14 +960,7 @@ int main() {
 		// of v and follows the "cw" links; here we start at the leftmost neighbor.
 		for (int v = 0; v < N; v++) {
 			int d0 = lr.embedding.leftmost_nbr[v];
-			if (d0 == -1) {
-				bool first = true;
-				for (int d : lr.adjs[v]) {
-					if (!first) std::cout << ' ';
-					first = false;
-					std::cout << lr.head(d);
-				}
-			} else {
+			if (d0 != -1) {
 				int d = d0;
 				bool first = true;
 				do {

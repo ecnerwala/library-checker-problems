@@ -81,7 +81,7 @@ forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
     name = "ordering.cpp"
     number = 1
 [[solutions]]
-    name = "lr_planarity.cpp"
+    name = "networkx_lr_planarity.cpp"
 [[solutions]]
     name = "wrong_euler.cpp"
     expect = "WA"
