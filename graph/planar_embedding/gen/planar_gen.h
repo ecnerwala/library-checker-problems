@@ -1,8 +1,9 @@
 #pragma once
-// Shared helpers for the planarity_testing generators.
+// Shared helpers for the planar_embedding generators.
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include <string>
 #include <array>
 #include <utility>
 #include <algorithm>
@@ -56,9 +57,9 @@ inline void dedup(Graph& g) {
 	g.edges = out;
 }
 
-// Prints the graph. By default, relabels vertices randomly, shuffles the edge
-// order and randomly flips edge orientations.
-inline void print_graph(Random& gen, Graph g, bool relabel = true, bool shuffle_edges = true, bool flip = true) {
+// Appends one case (the graph) to buf. By default, relabels vertices randomly,
+// shuffles the edge order and randomly flips edge orientations.
+inline void append_graph(std::string& buf, Random& gen, Graph g, bool relabel = true, bool shuffle_edges = true, bool flip = true) {
 	if (relabel) {
 		auto perm = gen.perm<int>(g.n);
 		for (auto& [u, v] : g.edges) { u = perm[u]; v = perm[v]; }
@@ -67,15 +68,31 @@ inline void print_graph(Random& gen, Graph g, bool relabel = true, bool shuffle_
 	if (flip) {
 		for (auto& [u, v] : g.edges) if (gen.uniform_bool()) std::swap(u, v);
 	}
-	printf("%d %d\n", g.n, int(g.edges.size()));
-	std::string buf;
-	buf.reserve(g.edges.size() * 16);
 	char tmp[32];
+	int len = snprintf(tmp, sizeof(tmp), "%d %d\n", g.n, int(g.edges.size()));
+	buf.append(tmp, len);
 	for (auto [u, v] : g.edges) {
-		int len = snprintf(tmp, sizeof(tmp), "%d %d\n", u, v);
+		len = snprintf(tmp, sizeof(tmp), "%d %d\n", u, v);
 		buf.append(tmp, len);
 	}
+}
+
+// Prints a test file consisting of the given cases (see append_graph).
+inline void print_graphs(Random& gen, const std::vector<Graph>& gs, bool relabel = true, bool shuffle_edges = true, bool flip = true) {
+	std::string buf;
+	size_t total = 0;
+	for (const auto& g : gs) total += g.edges.size();
+	buf.reserve(total * 16 + gs.size() * 16);
+	char tmp[32];
+	int len = snprintf(tmp, sizeof(tmp), "%d\n", int(gs.size()));
+	buf.append(tmp, len);
+	for (const auto& g : gs) append_graph(buf, gen, g, relabel, shuffle_edges, flip);
 	fwrite(buf.data(), 1, buf.size(), stdout);
+}
+
+// Prints a test file with a single case.
+inline void print_graph(Random& gen, Graph g, bool relabel = true, bool shuffle_edges = true, bool flip = true) {
+	print_graphs(gen, {std::move(g)}, relabel, shuffle_edges, flip);
 }
 
 // ---- Fixed families ----

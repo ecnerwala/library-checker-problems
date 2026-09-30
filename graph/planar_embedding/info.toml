@@ -1,13 +1,16 @@
-title = 'Planarity Testing'
+title = 'Planar Embedding'
 timelimit = 5.0
 forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
 
 [[tests]]
     name = "example.in"
-    number = 6
+    number = 2
 [[tests]]
-    name = "tiny.cpp"
-    number = 5
+    name = "all_small_graphs.cpp"
+    number = 3
+[[tests]]
+    name = "many_tiny.cpp"
+    number = 2
 [[tests]]
     name = "isolated_max.cpp"
     number = 1
@@ -58,7 +61,7 @@ forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
     number = 4
 [[tests]]
     name = "random_small.cpp"
-    number = 8
+    number = 4
 [[tests]]
     name = "random_medium.cpp"
     number = 4
@@ -87,17 +90,15 @@ forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
     name = "wrong_euler.cpp"
     expect = "WA"
 [[solutions]]
-    name = "wrong_bcc_heuristic.cpp"
+    name = "wrong_no_side_flip.cpp"
     expect = "WA"
-[[solutions]]
-    name = "wrong_k5_k33_subgraph.cpp"
-    expect = "WA"
-    allow_tle = true
 [[solutions]]
     name = "wrong_component_of_0.cpp"
     expect = "WA"
 
 [params]
+    T_MIN = 1
+    T_MAX = 100_000
     N_MIN = 1
     N_MAX = 1_000_000
     M_MIN = 0
