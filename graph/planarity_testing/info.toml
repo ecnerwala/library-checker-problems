@@ -1,0 +1,104 @@
+title = 'Planarity Testing'
+timelimit = 5.0
+forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
+
+[[tests]]
+    name = "example.in"
+    number = 6
+[[tests]]
+    name = "tiny.cpp"
+    number = 5
+[[tests]]
+    name = "isolated_max.cpp"
+    number = 1
+[[tests]]
+    name = "path_max.cpp"
+    number = 2
+[[tests]]
+    name = "cycle_max.cpp"
+    number = 1
+[[tests]]
+    name = "star_max.cpp"
+    number = 1
+[[tests]]
+    name = "classic_small.cpp"
+    number = 25
+[[tests]]
+    name = "complete_graph.cpp"
+    number = 8
+[[tests]]
+    name = "complete_bipartite.cpp"
+    number = 10
+[[tests]]
+    name = "ladder_family.cpp"
+    number = 6
+[[tests]]
+    name = "grid.cpp"
+    number = 6
+[[tests]]
+    name = "triangulation.cpp"
+    number = 9
+[[tests]]
+    name = "sparse_planar_plus_edges.cpp"
+    number = 6
+[[tests]]
+    name = "apollonian.cpp"
+    number = 4
+[[tests]]
+    name = "outerplanar.cpp"
+    number = 6
+[[tests]]
+    name = "two_tree.cpp"
+    number = 4
+[[tests]]
+    name = "cactus.cpp"
+    number = 3
+[[tests]]
+    name = "hidden_subdivision.cpp"
+    number = 8
+[[tests]]
+    name = "random_small.cpp"
+    number = 12
+[[tests]]
+    name = "random_medium.cpp"
+    number = 8
+[[tests]]
+    name = "random_max.cpp"
+    number = 3
+[[tests]]
+    name = "chords.cpp"
+    number = 6
+[[tests]]
+    name = "deep_path_chords.cpp"
+    number = 3
+[[tests]]
+    name = "block_cut.cpp"
+    number = 6
+[[tests]]
+    name = "many_components.cpp"
+    number = 6
+[[tests]]
+    name = "ordering.cpp"
+    number = 16
+
+[[solutions]]
+    name = "lr_planarity.cpp"
+[[solutions]]
+    name = "wrong_euler.cpp"
+    expect = "WA"
+[[solutions]]
+    name = "wrong_bcc_heuristic.cpp"
+    expect = "WA"
+[[solutions]]
+    name = "wrong_k5_k33_subgraph.cpp"
+    expect = "WA"
+    allow_tle = true
+[[solutions]]
+    name = "wrong_component_of_0.cpp"
+    expect = "WA"
+
+[params]
+    N_MIN = 1
+    N_MAX = 1_000_000
+    M_MIN = 0
+    M_MAX = 1_000_000
