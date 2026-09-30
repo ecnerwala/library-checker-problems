@@ -28,6 +28,9 @@ is vendored:
 No vendored file is modified.  All adaptations live in `../correct.cpp`:
 
 * the `.c` files are compiled as C++17 in one translation unit (`#include`d);
+* `USE_0BASEDARRAYS` is defined before the includes to select the library's
+  0-based vertex/edge indexing (`lowLevelUtils/appconst.h`) instead of the
+  default 1-based one;
 * definitions of the four extension-ID globals (`DRAWPLANAR_ID`,
   `K23SEARCH_ID`, `K33SEARCH_ID`, `K4SEARCH_ID`) and of the two graph-I/O hooks
   `_ReadPostprocess`/`_WritePostprocess`, whose upstream definitions live in

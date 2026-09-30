@@ -8,6 +8,7 @@
 // Distributed under the BSD-3-Clause license, see
 // edge-addition-planarity-suite/LICENSE.TXT.
 
+#define USE_0BASEDARRAYS
 #include "edge-addition-planarity-suite/c/graphLib/lowLevelUtils/apiutils.c"
 #include "edge-addition-planarity-suite/c/graphLib/lowLevelUtils/listcoll.c"
 #include "edge-addition-planarity-suite/c/graphLib/lowLevelUtils/stack.c"
@@ -40,47 +41,41 @@ int _ReadPostprocess(graphP, char *) { return OK; }
 int _WritePostprocess(graphP, char **) { return OK; }
 
 
+#include <cstdio>
 #include <cstdlib>
-#include <iostream>
-#include <utility>
-#include <vector>
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
     int T;
-    std::cin >> T;
+    scanf("%d", &T);
     while (T--) {
         int N, M;
-        std::cin >> N >> M;
-        std::vector<std::pair<int, int>> edges(M);
-        for (auto& [a, b] : edges) std::cin >> a >> b;
-        // The library uses 1-based vertex indices (USE_1BASEDARRAYS).
-        // The default edge capacity is 3N; nonplanar inputs may have more edges.
+        scanf("%d %d", &N, &M);
         graphP g = gp_New();
-        if (M > 0 && gp_EnsureEdgeCapacity(g, M) != OK) std::exit(1);
-        if (gp_EnsureVertexCapacity(g, N) != OK) std::exit(1);
-        for (auto [a, b] : edges) {
-            if (gp_AddEdge(g, a + 1, 0, b + 1, 0) != OK) std::exit(1);
+        if (M > 0 && gp_EnsureEdgeCapacity(g, M) != OK) exit(1);
+        if (gp_EnsureVertexCapacity(g, N) != OK) exit(1);
+        for (int i = 0; i < M; i++) {
+            int a, b;
+            scanf("%d %d", &a, &b);
+            if (gp_AddEdge(g, a, 0, b, 0) != OK) exit(1);
         }
         int r = gp_Embed(g, EMBEDFLAGS_PLANAR);
         if (r == OK) {
             // gp_Embed leaves the vertices in DFS order; restore the input numbering.
-            if (gp_SortVertices(g) != OK) std::exit(1);
-            std::cout << "Yes\n";
+            if (gp_SortVertices(g) != OK) exit(1);
+            printf("Yes\n");
             for (int v = gp_LowerBoundVertices(g); v < gp_UpperBoundVertices(g); v++) {
                 bool first = true;
                 for (int e = gp_GetFirstEdge(g, v); gp_IsEdge(g, e); e = gp_GetNextEdge(g, e)) {
-                    if (!first) std::cout << ' ';
+                    if (!first) printf(" ");
                     first = false;
-                    std::cout << gp_GetNeighbor(g, e) - 1;
+                    printf("%d", gp_GetNeighbor(g, e));
                 }
-                std::cout << '\n';
+                printf("\n");
             }
         } else if (r == NONEMBEDDABLE) {
-            std::cout << "No\n";
+            printf("No\n");
         } else {
-            std::exit(1);
+            exit(1);
         }
         gp_Free(&g);
     }
