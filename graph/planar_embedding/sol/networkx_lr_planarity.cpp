@@ -77,27 +77,27 @@ struct LRPlanarity;
 //     all edges must have a right orientation.
 //     """
 struct Interval {
-	//     def __init__(self, low=None, high=None):
-	//         self.low = low
-	//         self.high = high
+	// def __init__(self, low=None, high=None):
+	//     self.low = low
+	//     self.high = high
 	int low = -1, high = -1;
 
-	//     def empty(self):
-	//         """Check if the interval is empty"""
-	//         return self.low is None and self.high is None
+	// def empty(self):
+	//     """Check if the interval is empty"""
+	//     return self.low is None and self.high is None
 	bool empty() const { return low == -1 && high == -1; }
 
-	//     def copy(self):
-	//         """Returns a copy of this interval"""
-	//         return Interval(self.low, self.high)
+	// def copy(self):
+	//     """Returns a copy of this interval"""
+	//     return Interval(self.low, self.high)
 	Interval copy() const { return Interval{low, high}; }
 
-	//     def conflicting(self, b, planarity_state):
-	//         """Returns True if interval I conflicts with edge b"""
-	//         return (
-	//             not self.empty()
-	//             and planarity_state.lowpt[self.high] > planarity_state.lowpt[b]
-	//         )
+	// def conflicting(self, b, planarity_state):
+	//     """Returns True if interval I conflicts with edge b"""
+	//     return (
+	//         not self.empty()
+	//         and planarity_state.lowpt[self.high] > planarity_state.lowpt[b]
+	//     )
 	bool conflicting(int b, const LRPlanarity& planarity_state) const;
 };
 
@@ -108,27 +108,27 @@ struct Interval {
 //     the one in the right interval.
 //     """
 struct ConflictPair {
-	//     def __init__(self, left=Interval(), right=Interval()):
-	//         self.left = left
-	//         self.right = right
+	// def __init__(self, left=Interval(), right=Interval()):
+	//     self.left = left
+	//     self.right = right
 	Interval left, right;
 
-	//     def swap(self):
-	//         """Swap left and right intervals"""
-	//         temp = self.left
-	//         self.left = self.right
-	//         self.right = temp
+	// def swap(self):
+	//     """Swap left and right intervals"""
+	//     temp = self.left
+	//     self.left = self.right
+	//     self.right = temp
 	void swap() { std::swap(left, right); }
 
-	//     def lowest(self, planarity_state):
-	//         """Returns the lowest lowpoint of a conflict pair"""
-	//         if self.left.empty():
-	//             return planarity_state.lowpt[self.right.low]
-	//         if self.right.empty():
-	//             return planarity_state.lowpt[self.left.low]
-	//         return min(
-	//             planarity_state.lowpt[self.left.low], planarity_state.lowpt[self.right.low]
-	//         )
+	// def lowest(self, planarity_state):
+	//     """Returns the lowest lowpoint of a conflict pair"""
+	//     if self.left.empty():
+	//         return planarity_state.lowpt[self.right.low]
+	//     if self.right.empty():
+	//         return planarity_state.lowpt[self.left.low]
+	//     return min(
+	//         planarity_state.lowpt[self.left.low], planarity_state.lowpt[self.right.low]
+	//     )
 	int lowest(const LRPlanarity& planarity_state) const;
 };
 
@@ -153,97 +153,97 @@ struct PlanarEmbedding {
 
 	PlanarEmbedding(int N, int M) : cw(2 * M, -1), ccw(2 * M, -1), leftmost_nbr(N, -1) {}
 
-	//     def add_half_edge(self, start_node, end_node, *, cw=None, ccw=None):
-	//         """Adds a half-edge from `start_node` to `end_node`.
-	//         ...
-	//         """
+	// def add_half_edge(self, start_node, end_node, *, cw=None, ccw=None):
+	//     """Adds a half-edge from `start_node` to `end_node`.
+	//     ...
+	//     """
 	// Here d = (start_node, end_node); cw_ref / ccw_ref are the darts
 	// (start_node, cw) / (start_node, ccw).
 	void add_half_edge(int start_node, int d, int cw_ref, int ccw_ref) {
-		//         succs = self._succ.get(start_node)
-		//         if succs:
+		// succs = self._succ.get(start_node)
+		// if succs:
 		if (leftmost_nbr[start_node] != -1) {
-			//             # there is already some edge out of start_node
-			//             leftmost_nbr = next(reversed(self._succ[start_node]))
+			// # there is already some edge out of start_node
+			// leftmost_nbr = next(reversed(self._succ[start_node]))
 			int leftmost = leftmost_nbr[start_node];
 			bool move_leftmost_nbr_to_end;
-			//             if cw is not None:
+			// if cw is not None:
 			if (cw_ref != -1) {
-				//                 if cw not in succs:
-				//                     raise nx.NetworkXError("Invalid clockwise reference node.")
-				//                 if ccw is not None:
-				//                     raise nx.NetworkXError("Only one of cw/ccw can be specified.")
+				// if cw not in succs:
+				//     raise nx.NetworkXError("Invalid clockwise reference node.")
+				// if ccw is not None:
+				//     raise nx.NetworkXError("Only one of cw/ccw can be specified.")
 				assert(ccw_ref == -1);
-				//                 ref_ccw = succs[cw]["ccw"]
+				// ref_ccw = succs[cw]["ccw"]
 				int ref_ccw = ccw[cw_ref];
-				//                 super().add_edge(start_node, end_node, cw=cw, ccw=ref_ccw)
+				// super().add_edge(start_node, end_node, cw=cw, ccw=ref_ccw)
 				cw[d] = cw_ref;
 				ccw[d] = ref_ccw;
-				//                 succs[ref_ccw]["cw"] = end_node
+				// succs[ref_ccw]["cw"] = end_node
 				cw[ref_ccw] = d;
-				//                 succs[cw]["ccw"] = end_node
+				// succs[cw]["ccw"] = end_node
 				ccw[cw_ref] = d;
-				//                 # when (cw == leftmost_nbr), the newly added neighbor is
-				//                 # already at the end of dict self._succ[start_node] and
-				//                 # takes the place of the former leftmost_nbr
-				//                 move_leftmost_nbr_to_end = cw != leftmost_nbr
+				// # when (cw == leftmost_nbr), the newly added neighbor is
+				// # already at the end of dict self._succ[start_node] and
+				// # takes the place of the former leftmost_nbr
+				// move_leftmost_nbr_to_end = cw != leftmost_nbr
 				move_leftmost_nbr_to_end = cw_ref != leftmost;
-			//             elif ccw is not None:
+			// elif ccw is not None:
 			} else if (ccw_ref != -1) {
-				//                 if ccw not in succs:
-				//                     raise nx.NetworkXError("Invalid counterclockwise reference node.")
-				//                 ref_cw = succs[ccw]["cw"]
+				// if ccw not in succs:
+				//     raise nx.NetworkXError("Invalid counterclockwise reference node.")
+				// ref_cw = succs[ccw]["cw"]
 				int ref_cw = cw[ccw_ref];
-				//                 super().add_edge(start_node, end_node, cw=ref_cw, ccw=ccw)
+				// super().add_edge(start_node, end_node, cw=ref_cw, ccw=ccw)
 				cw[d] = ref_cw;
 				ccw[d] = ccw_ref;
-				//                 succs[ref_cw]["ccw"] = end_node
+				// succs[ref_cw]["ccw"] = end_node
 				ccw[ref_cw] = d;
-				//                 succs[ccw]["cw"] = end_node
+				// succs[ccw]["cw"] = end_node
 				cw[ccw_ref] = d;
-				//                 move_leftmost_nbr_to_end = True
+				// move_leftmost_nbr_to_end = True
 				move_leftmost_nbr_to_end = true;
-			//             else:
-			//                 raise nx.NetworkXError(
-			//                     "Node already has out-half-edge(s), either cw or ccw reference node required."
-			//                 )
+			// else:
+			//     raise nx.NetworkXError(
+			//         "Node already has out-half-edge(s), either cw or ccw reference node required."
+			//     )
 			} else {
 				assert(false);
 			}
-			//             if move_leftmost_nbr_to_end:
-			//                 # LRPlanarity (via self.add_half_edge_first()) requires that
-			//                 # we keep track of the leftmost neighbor, which we accomplish
-			//                 # by keeping it as the last key in dict self._succ[start_node]
-			//                 succs[leftmost_nbr] = succs.pop(leftmost_nbr)
+			// if move_leftmost_nbr_to_end:
+			//     # LRPlanarity (via self.add_half_edge_first()) requires that
+			//     # we keep track of the leftmost neighbor, which we accomplish
+			//     # by keeping it as the last key in dict self._succ[start_node]
+			//     succs[leftmost_nbr] = succs.pop(leftmost_nbr)
 			if (move_leftmost_nbr_to_end) {
 				leftmost_nbr[start_node] = leftmost;
 			} else {
 				leftmost_nbr[start_node] = d;
 			}
-		//         else:
+		// else:
 		} else {
-			//             if cw is not None or ccw is not None:
-			//                 raise nx.NetworkXError("Invalid reference node.")
+			// if cw is not None or ccw is not None:
+			//     raise nx.NetworkXError("Invalid reference node.")
 			assert(cw_ref == -1 && ccw_ref == -1);
-			//             # adding the first edge out of start_node
-			//             super().add_edge(start_node, end_node, ccw=end_node, cw=end_node)
+			// # adding the first edge out of start_node
+			// super().add_edge(start_node, end_node, ccw=end_node, cw=end_node)
 			cw[d] = d;
 			ccw[d] = d;
 			leftmost_nbr[start_node] = d;
 		}
 	}
 
-	//     def add_half_edge_first(self, start_node, end_node):
-	//         """Add a half-edge and set end_node as start_node's leftmost neighbor.
-	//         ...
-	//         """
+	// def add_half_edge_first(self, start_node, end_node):
+	//     """Add a half-edge and set end_node as start_node's leftmost neighbor.
+	//     ...
+	//     """
 	void add_half_edge_first(int start_node, int d) {
-		//         succs = self._succ.get(start_node)
-		//         # the leftmost neighbor is the last entry in the
-		//         # self._succ[start_node] dict
-		//         leftmost_nbr = next(reversed(succs)) if succs else None
+		// succs = self._succ.get(start_node)
+		// # the leftmost neighbor is the last entry in the
+		// # self._succ[start_node] dict
+		// leftmost_nbr = next(reversed(succs)) if succs else None
 		int leftmost = leftmost_nbr[start_node];
-		//         self.add_half_edge(start_node, end_node, cw=leftmost_nbr)
+		// self.add_half_edge(start_node, end_node, cw=leftmost_nbr)
 		add_half_edge(start_node, d, leftmost, -1);
 	}
 };
@@ -257,59 +257,59 @@ struct LRPlanarity {
 	int tail(int d) const { return edges[d >> 1][d & 1]; }
 	int head(int d) const { return edges[d >> 1][(d & 1) ^ 1]; }
 
-	//     def __init__(self, G):
-	//         # copy G without adding self-loops
-	//         self.G = nx.Graph()
-	//         self.G.add_nodes_from(G.nodes)
-	//         for e in G.edges:
-	//             if e[0] != e[1]:
-	//                 self.G.add_edge(e[0], e[1])
+	// def __init__(self, G):
+	//     # copy G without adding self-loops
+	//     self.G = nx.Graph()
+	//     self.G.add_nodes_from(G.nodes)
+	//     for e in G.edges:
+	//         if e[0] != e[1]:
+	//             self.G.add_edge(e[0], e[1])
 	// (The input is a simple graph; G is given by N and edges.)
 
-	//         self.roots = []
+	//     self.roots = []
 	std::vector<int> roots;
 
-	//         # distance from tree root
-	//         self.height = defaultdict(lambda: None)
+	//     # distance from tree root
+	//     self.height = defaultdict(lambda: None)
 	std::vector<int> height;
 
-	//         self.lowpt = {}  # height of lowest return point of an edge
-	//         self.lowpt2 = {}  # height of second lowest return point
-	//         self.nesting_depth = {}  # for nesting order
+	//     self.lowpt = {}  # height of lowest return point of an edge
+	//     self.lowpt2 = {}  # height of second lowest return point
+	//     self.nesting_depth = {}  # for nesting order
 	std::vector<int> lowpt, lowpt2, nesting_depth;
 
-	//         # None -> missing edge
-	//         self.parent_edge = defaultdict(lambda: None)
+	//     # None -> missing edge
+	//     self.parent_edge = defaultdict(lambda: None)
 	std::vector<int> parent_edge;
 
-	//         # oriented DFS graph
-	//         self.DG = nx.DiGraph()
-	//         self.DG.add_nodes_from(G.nodes)
+	//     # oriented DFS graph
+	//     self.DG = nx.DiGraph()
+	//     self.DG.add_nodes_from(G.nodes)
 	// (in_DG[d]: whether dart d is an edge of DG; DG[v]: its out-darts in
 	// insertion order, like DiGraph successor iteration.)
 	std::vector<char> in_DG;
 	std::vector<std::vector<int>> DG;
 
-	//         self.adjs = {}
-	//         self.ordered_adjs = {}
+	//     self.adjs = {}
+	//     self.ordered_adjs = {}
 	std::vector<std::vector<int>> adjs, ordered_adjs;
 
-	//         self.ref = defaultdict(lambda: None)
-	//         self.side = defaultdict(lambda: 1)
+	//     self.ref = defaultdict(lambda: None)
+	//     self.side = defaultdict(lambda: 1)
 	std::vector<int> ref, side;
 
-	//         # stack of conflict pairs
-	//         self.S = []
-	//         self.stack_bottom = {}
-	//         self.lowpt_edge = {}
+	//     # stack of conflict pairs
+	//     self.S = []
+	//     self.stack_bottom = {}
+	//     self.lowpt_edge = {}
 	std::vector<ConflictPair> S;
 	std::vector<int> stack_bottom, lowpt_edge;
 
-	//         self.left_ref = {}
-	//         self.right_ref = {}
+	//     self.left_ref = {}
+	//     self.right_ref = {}
 	std::vector<int> left_ref, right_ref;
 
-	//         self.embedding = PlanarEmbedding()
+	//     self.embedding = PlanarEmbedding()
 	PlanarEmbedding embedding;
 
 	// per-DFS-call defaultdicts of dfs_orientation / dfs_testing / dfs_embedding / sign
@@ -325,36 +325,36 @@ struct LRPlanarity {
 		  left_ref(N, -1), right_ref(N, -1), embedding(N, M),
 		  ind(N, 0), skip_init(2 * M, 0), old_ref(2 * M, -1) {}
 
-	//     def lr_planarity(self):
-	//         """Execute the LR planarity test.
+	// def lr_planarity(self):
+	//     """Execute the LR planarity test.
 	//
-	//         Returns
-	//         -------
-	//         embedding : dict
-	//             If the graph is planar an embedding is returned. Otherwise None.
-	//         """
+	//     Returns
+	//     -------
+	//     embedding : dict
+	//         If the graph is planar an embedding is returned. Otherwise None.
+	//     """
 	bool lr_planarity() {
-		//         if self.G.order() > 2 and self.G.size() > 3 * self.G.order() - 6:
-		//             # graph is not planar
-		//             return None
+		// if self.G.order() > 2 and self.G.size() > 3 * self.G.order() - 6:
+		//     # graph is not planar
+		//     return None
 		if (N > 2 && M > 3 * N - 6) {
 			return false;
 		}
 
-		//         # make adjacency lists for dfs
-		//         for v in self.G:
-		//             self.adjs[v] = list(self.G[v])
+		// # make adjacency lists for dfs
+		// for v in self.G:
+		//     self.adjs[v] = list(self.G[v])
 		for (int i = 0; i < M; i++) {
 			adjs[edges[i][0]].push_back(2 * i);
 			adjs[edges[i][1]].push_back(2 * i + 1);
 		}
 
-		//         # orientation of the graph by depth first search traversal
-		//         for v in self.G:
-		//             if self.height[v] is None:
-		//                 self.height[v] = 0
-		//                 self.roots.append(v)
-		//                 self.dfs_orientation(v)
+		// # orientation of the graph by depth first search traversal
+		// for v in self.G:
+		//     if self.height[v] is None:
+		//         self.height[v] = 0
+		//         self.roots.append(v)
+		//         self.dfs_orientation(v)
 		for (int v = 0; v < N; v++) {
 			if (height[v] == -1) {
 				height[v] = 0;
@@ -363,28 +363,28 @@ struct LRPlanarity {
 			}
 		}
 
-		//         # Free no longer used variables
-		//         self.G = None
-		//         self.lowpt2 = None
-		//         self.adjs = None
+		// # Free no longer used variables
+		// self.G = None
+		// self.lowpt2 = None
+		// self.adjs = None
 		lowpt2.clear();
 		adjs.clear();
 
-		//         # testing
-		//         for v in self.DG:  # sort the adjacency lists by nesting depth
-		//             # note: this sorting leads to non linear time
-		//             self.ordered_adjs[v] = sorted(
-		//                 self.DG[v], key=lambda x: self.nesting_depth[(v, x)]
-		//             )
+		// # testing
+		// for v in self.DG:  # sort the adjacency lists by nesting depth
+		//     # note: this sorting leads to non linear time
+		//     self.ordered_adjs[v] = sorted(
+		//         self.DG[v], key=lambda x: self.nesting_depth[(v, x)]
+		//     )
 		for (int v = 0; v < N; v++) {
 			ordered_adjs[v] = DG[v];
 			std::stable_sort(ordered_adjs[v].begin(), ordered_adjs[v].end(), [&](int x, int y) {
 				return nesting_depth[x] < nesting_depth[y];
 			});
 		}
-		//         for v in self.roots:
-		//             if not self.dfs_testing(v):
-		//                 return None
+		// for v in self.roots:
+		//     if not self.dfs_testing(v):
+		//         return None
 		std::fill(ind.begin(), ind.end(), 0);
 		std::fill(skip_init.begin(), skip_init.end(), 0);
 		for (int v : roots) {
@@ -393,34 +393,34 @@ struct LRPlanarity {
 			}
 		}
 
-		//         # Free no longer used variables
-		//         self.height = None
-		//         self.lowpt = None
-		//         self.S = None
-		//         self.stack_bottom = None
-		//         self.lowpt_edge = None
+		// # Free no longer used variables
+		// self.height = None
+		// self.lowpt = None
+		// self.S = None
+		// self.stack_bottom = None
+		// self.lowpt_edge = None
 		height.clear();
 		S.clear();
 		stack_bottom.clear();
 		lowpt_edge.clear();
 
-		//         for e in self.DG.edges:
-		//             self.nesting_depth[e] = self.sign(e) * self.nesting_depth[e]
+		// for e in self.DG.edges:
+		//     self.nesting_depth[e] = self.sign(e) * self.nesting_depth[e]
 		for (int e = 0; e < 2 * M; e++) {
 			if (in_DG[e]) nesting_depth[e] = sign(e) * nesting_depth[e];
 		}
 
-		//         self.embedding.add_nodes_from(self.DG.nodes)
-		//         for v in self.DG:
-		//             # sort the adjacency lists again
-		//             self.ordered_adjs[v] = sorted(
-		//                 self.DG[v], key=lambda x: self.nesting_depth[(v, x)]
-		//             )
-		//             # initialize the embedding
-		//             previous_node = None
-		//             for w in self.ordered_adjs[v]:
-		//                 self.embedding.add_half_edge(v, w, ccw=previous_node)
-		//                 previous_node = w
+		// self.embedding.add_nodes_from(self.DG.nodes)
+		// for v in self.DG:
+		//     # sort the adjacency lists again
+		//     self.ordered_adjs[v] = sorted(
+		//         self.DG[v], key=lambda x: self.nesting_depth[(v, x)]
+		//     )
+		//     # initialize the embedding
+		//     previous_node = None
+		//     for w in self.ordered_adjs[v]:
+		//         self.embedding.add_half_edge(v, w, ccw=previous_node)
+		//         previous_node = w
 		for (int v = 0; v < N; v++) {
 			ordered_adjs[v] = DG[v];
 			std::stable_sort(ordered_adjs[v].begin(), ordered_adjs[v].end(), [&](int x, int y) {
@@ -433,199 +433,199 @@ struct LRPlanarity {
 			}
 		}
 
-		//         # Free no longer used variables
-		//         self.DG = None
-		//         self.nesting_depth = None
-		//         self.ref = None
+		// # Free no longer used variables
+		// self.DG = None
+		// self.nesting_depth = None
+		// self.ref = None
 		DG.clear();
 		nesting_depth.clear();
 		ref.clear();
 
-		//         # compute the complete embedding
-		//         for v in self.roots:
-		//             self.dfs_embedding(v)
+		// # compute the complete embedding
+		// for v in self.roots:
+		//     self.dfs_embedding(v)
 		std::fill(ind.begin(), ind.end(), 0);
 		for (int v : roots) {
 			dfs_embedding(v);
 		}
 
-		//         # Free no longer used variables
-		//         self.roots = None
-		//         self.parent_edge = None
-		//         self.ordered_adjs = None
-		//         self.left_ref = None
-		//         self.right_ref = None
-		//         self.side = None
+		// # Free no longer used variables
+		// self.roots = None
+		// self.parent_edge = None
+		// self.ordered_adjs = None
+		// self.left_ref = None
+		// self.right_ref = None
+		// self.side = None
 
-		//         return self.embedding
+		// return self.embedding
 		return true;
 	}
 
-	//     def dfs_orientation(self, v):
-	//         """Orient the graph by DFS, compute lowpoints and nesting order."""
+	// def dfs_orientation(self, v):
+	//     """Orient the graph by DFS, compute lowpoints and nesting order."""
 	void dfs_orientation(int v) {
-		//         # the recursion stack
-		//         dfs_stack = [v]
+		// # the recursion stack
+		// dfs_stack = [v]
 		std::vector<int> dfs_stack = {v};
-		//         # index of next edge to handle in adjacency list of each node
-		//         ind = defaultdict(lambda: 0)
-		//         # boolean to indicate whether to skip the initial work for an edge
-		//         skip_init = defaultdict(lambda: False)
+		// # index of next edge to handle in adjacency list of each node
+		// ind = defaultdict(lambda: 0)
+		// # boolean to indicate whether to skip the initial work for an edge
+		// skip_init = defaultdict(lambda: False)
 
-		//         while dfs_stack:
+		// while dfs_stack:
 		while (!dfs_stack.empty()) {
-			//             v = dfs_stack.pop()
+			// v = dfs_stack.pop()
 			v = dfs_stack.back();
 			dfs_stack.pop_back();
-			//             e = self.parent_edge[v]
+			// e = self.parent_edge[v]
 			int e = parent_edge[v];
 
-			//             for w in self.adjs[v][ind[v] :]:
+			// for w in self.adjs[v][ind[v] :]:
 			while (ind[v] < int(adjs[v].size())) {
-				//                 vw = (v, w)
+				// vw = (v, w)
 				int vw = adjs[v][ind[v]];
 				int w = head(vw);
 
-				//                 if not skip_init[vw]:
+				// if not skip_init[vw]:
 				if (!skip_init[vw]) {
-					//                     if (v, w) in self.DG.edges or (w, v) in self.DG.edges:
-					//                         ind[v] += 1
-					//                         continue  # the edge was already oriented
+					// if (v, w) in self.DG.edges or (w, v) in self.DG.edges:
+					//     ind[v] += 1
+					//     continue  # the edge was already oriented
 					if (in_DG[vw] || in_DG[vw ^ 1]) {
 						ind[v] += 1;
 						continue;
 					}
 
-					//                     self.DG.add_edge(v, w)  # orient the edge
+					// self.DG.add_edge(v, w)  # orient the edge
 					in_DG[vw] = 1;
 					DG[v].push_back(vw);
 
-					//                     self.lowpt[vw] = self.height[v]
-					//                     self.lowpt2[vw] = self.height[v]
+					// self.lowpt[vw] = self.height[v]
+					// self.lowpt2[vw] = self.height[v]
 					lowpt[vw] = height[v];
 					lowpt2[vw] = height[v];
-					//                     if self.height[w] is None:  # (v, w) is a tree edge
+					// if self.height[w] is None:  # (v, w) is a tree edge
 					if (height[w] == -1) {
-						//                         self.parent_edge[w] = vw
-						//                         self.height[w] = self.height[v] + 1
+						// self.parent_edge[w] = vw
+						// self.height[w] = self.height[v] + 1
 						parent_edge[w] = vw;
 						height[w] = height[v] + 1;
 
-						//                         dfs_stack.append(v)  # revisit v after finishing w
-						//                         dfs_stack.append(w)  # visit w next
-						//                         skip_init[vw] = True  # don't redo this block
-						//                         break  # handle next node in dfs_stack (i.e. w)
+						// dfs_stack.append(v)  # revisit v after finishing w
+						// dfs_stack.append(w)  # visit w next
+						// skip_init[vw] = True  # don't redo this block
+						// break  # handle next node in dfs_stack (i.e. w)
 						dfs_stack.push_back(v);
 						dfs_stack.push_back(w);
 						skip_init[vw] = 1;
 						break;
-					//                     else:  # (v, w) is a back edge
-					//                         self.lowpt[vw] = self.height[w]
+					// else:  # (v, w) is a back edge
+					//     self.lowpt[vw] = self.height[w]
 					} else {
 						lowpt[vw] = height[w];
 					}
 				}
 
-				//                 # determine nesting graph
-				//                 self.nesting_depth[vw] = 2 * self.lowpt[vw]
-				//                 if self.lowpt2[vw] < self.height[v]:  # chordal
-				//                     self.nesting_depth[vw] += 1
+				// # determine nesting graph
+				// self.nesting_depth[vw] = 2 * self.lowpt[vw]
+				// if self.lowpt2[vw] < self.height[v]:  # chordal
+				//     self.nesting_depth[vw] += 1
 				nesting_depth[vw] = 2 * lowpt[vw];
 				if (lowpt2[vw] < height[v]) {
 					nesting_depth[vw] += 1;
 				}
 
-				//                 # update lowpoints of parent edge e
-				//                 if e is not None:
+				// # update lowpoints of parent edge e
+				// if e is not None:
 				if (e != -1) {
-					//                     if self.lowpt[vw] < self.lowpt[e]:
-					//                         self.lowpt2[e] = min(self.lowpt[e], self.lowpt2[vw])
-					//                         self.lowpt[e] = self.lowpt[vw]
+					// if self.lowpt[vw] < self.lowpt[e]:
+					//     self.lowpt2[e] = min(self.lowpt[e], self.lowpt2[vw])
+					//     self.lowpt[e] = self.lowpt[vw]
 					if (lowpt[vw] < lowpt[e]) {
 						lowpt2[e] = std::min(lowpt[e], lowpt2[vw]);
 						lowpt[e] = lowpt[vw];
-					//                     elif self.lowpt[vw] > self.lowpt[e]:
-					//                         self.lowpt2[e] = min(self.lowpt2[e], self.lowpt[vw])
+					// elif self.lowpt[vw] > self.lowpt[e]:
+					//     self.lowpt2[e] = min(self.lowpt2[e], self.lowpt[vw])
 					} else if (lowpt[vw] > lowpt[e]) {
 						lowpt2[e] = std::min(lowpt2[e], lowpt[vw]);
-					//                     else:
-					//                         self.lowpt2[e] = min(self.lowpt2[e], self.lowpt2[vw])
+					// else:
+					//     self.lowpt2[e] = min(self.lowpt2[e], self.lowpt2[vw])
 					} else {
 						lowpt2[e] = std::min(lowpt2[e], lowpt2[vw]);
 					}
 				}
 
-				//                 ind[v] += 1
+				// ind[v] += 1
 				ind[v] += 1;
 			}
 		}
 	}
 
-	//     def dfs_testing(self, v):
-	//         """Test for LR partition."""
+	// def dfs_testing(self, v):
+	//     """Test for LR partition."""
 	bool dfs_testing(int v) {
-		//         # the recursion stack
-		//         dfs_stack = [v]
+		// # the recursion stack
+		// dfs_stack = [v]
 		std::vector<int> dfs_stack = {v};
-		//         # index of next edge to handle in adjacency list of each node
-		//         ind = defaultdict(lambda: 0)
-		//         # boolean to indicate whether to skip the initial work for an edge
-		//         skip_init = defaultdict(lambda: False)
+		// # index of next edge to handle in adjacency list of each node
+		// ind = defaultdict(lambda: 0)
+		// # boolean to indicate whether to skip the initial work for an edge
+		// skip_init = defaultdict(lambda: False)
 
-		//         while dfs_stack:
+		// while dfs_stack:
 		while (!dfs_stack.empty()) {
-			//             v = dfs_stack.pop()
+			// v = dfs_stack.pop()
 			v = dfs_stack.back();
 			dfs_stack.pop_back();
-			//             e = self.parent_edge[v]
+			// e = self.parent_edge[v]
 			int e = parent_edge[v];
-			//             # to indicate whether to skip the final block after the for loop
-			//             skip_final = False
+			// # to indicate whether to skip the final block after the for loop
+			// skip_final = False
 			bool skip_final = false;
 
-			//             for w in self.ordered_adjs[v][ind[v] :]:
+			// for w in self.ordered_adjs[v][ind[v] :]:
 			while (ind[v] < int(ordered_adjs[v].size())) {
-				//                 ei = (v, w)
+				// ei = (v, w)
 				int ei = ordered_adjs[v][ind[v]];
 				int w = head(ei);
 
-				//                 if not skip_init[ei]:
+				// if not skip_init[ei]:
 				if (!skip_init[ei]) {
-					//                     self.stack_bottom[ei] = top_of_stack(self.S)
+					// self.stack_bottom[ei] = top_of_stack(self.S)
 					stack_bottom[ei] = top_of_stack(S);
 
-					//                     if ei == self.parent_edge[w]:  # tree edge
+					// if ei == self.parent_edge[w]:  # tree edge
 					if (ei == parent_edge[w]) {
-						//                         dfs_stack.append(v)  # revisit v after finishing w
-						//                         dfs_stack.append(w)  # visit w next
-						//                         skip_init[ei] = True  # don't redo this block
-						//                         skip_final = True  # skip final work after breaking
-						//                         break  # handle next node in dfs_stack (i.e. w)
+						// dfs_stack.append(v)  # revisit v after finishing w
+						// dfs_stack.append(w)  # visit w next
+						// skip_init[ei] = True  # don't redo this block
+						// skip_final = True  # skip final work after breaking
+						// break  # handle next node in dfs_stack (i.e. w)
 						dfs_stack.push_back(v);
 						dfs_stack.push_back(w);
 						skip_init[ei] = 1;
 						skip_final = true;
 						break;
-					//                     else:  # back edge
-					//                         self.lowpt_edge[ei] = ei
-					//                         self.S.append(ConflictPair(right=Interval(ei, ei)))
+					// else:  # back edge
+					//     self.lowpt_edge[ei] = ei
+					//     self.S.append(ConflictPair(right=Interval(ei, ei)))
 					} else {
 						lowpt_edge[ei] = ei;
 						S.push_back(ConflictPair{Interval{}, Interval{ei, ei}});
 					}
 				}
 
-				//                 # integrate new return edges
-				//                 if self.lowpt[ei] < self.height[v]:
+				// # integrate new return edges
+				// if self.lowpt[ei] < self.height[v]:
 				if (lowpt[ei] < height[v]) {
-					//                     if w == self.ordered_adjs[v][0]:  # e_i has return edge
-					//                         self.lowpt_edge[e] = self.lowpt_edge[ei]
+					// if w == self.ordered_adjs[v][0]:  # e_i has return edge
+					//     self.lowpt_edge[e] = self.lowpt_edge[ei]
 					if (ei == ordered_adjs[v][0]) {
 						lowpt_edge[e] = lowpt_edge[ei];
-					//                     else:  # add constraints of e_i
-					//                         if not self.add_constraints(ei, e):
-					//                             # graph is not planar
-					//                             return False
+					// else:  # add constraints of e_i
+					//     if not self.add_constraints(ei, e):
+					//         # graph is not planar
+					//         return False
 					} else {
 						if (!add_constraints(ei, e)) {
 							return false;
@@ -633,14 +633,14 @@ struct LRPlanarity {
 					}
 				}
 
-				//                 ind[v] += 1
+				// ind[v] += 1
 				ind[v] += 1;
 			}
 
-			//             if not skip_final:
-			//                 # remove back edges returning to parent
-			//                 if e is not None:  # v isn't root
-			//                     self.remove_back_edges(e)
+			// if not skip_final:
+			//     # remove back edges returning to parent
+			//     if e is not None:  # v isn't root
+			//         self.remove_back_edges(e)
 			if (!skip_final) {
 				if (e != -1) {
 					remove_back_edges(e);
@@ -648,87 +648,87 @@ struct LRPlanarity {
 			}
 		}
 
-		//         return True
+		// return True
 		return true;
 	}
 
-	//     def add_constraints(self, ei, e):
+	// def add_constraints(self, ei, e):
 	bool add_constraints(int ei, int e) {
-		//         P = ConflictPair()
+		// P = ConflictPair()
 		ConflictPair P;
-		//         # merge return edges of e_i into P.right
-		//         while True:
+		// # merge return edges of e_i into P.right
+		// while True:
 		while (true) {
-			//             Q = self.S.pop()
+			// Q = self.S.pop()
 			ConflictPair Q = S.back();
 			S.pop_back();
-			//             if not Q.left.empty():
-			//                 Q.swap()
+			// if not Q.left.empty():
+			//     Q.swap()
 			if (!Q.left.empty()) {
 				Q.swap();
 			}
-			//             if not Q.left.empty():  # not planar
-			//                 return False
+			// if not Q.left.empty():  # not planar
+			//     return False
 			if (!Q.left.empty()) {
 				return false;
 			}
-			//             if self.lowpt[Q.right.low] > self.lowpt[e]:
+			// if self.lowpt[Q.right.low] > self.lowpt[e]:
 			if (lowpt[Q.right.low] > lowpt[e]) {
-				//                 # merge intervals
-				//                 if P.right.empty():  # topmost interval
-				//                     P.right = Q.right.copy()
-				//                 else:
-				//                     self.ref[P.right.low] = Q.right.high
-				//                 P.right.low = Q.right.low
+				// # merge intervals
+				// if P.right.empty():  # topmost interval
+				//     P.right = Q.right.copy()
+				// else:
+				//     self.ref[P.right.low] = Q.right.high
+				// P.right.low = Q.right.low
 				if (P.right.empty()) {
 					P.right = Q.right.copy();
 				} else {
 					ref[P.right.low] = Q.right.high;
 				}
 				P.right.low = Q.right.low;
-			//             else:  # align
-			//                 self.ref[Q.right.low] = self.lowpt_edge[e]
+			// else:  # align
+			//     self.ref[Q.right.low] = self.lowpt_edge[e]
 			} else {
 				ref[Q.right.low] = lowpt_edge[e];
 			}
-			//             if top_of_stack(self.S) == self.stack_bottom[ei]:
-			//                 break
+			// if top_of_stack(self.S) == self.stack_bottom[ei]:
+			//     break
 			if (top_of_stack(S) == stack_bottom[ei]) {
 				break;
 			}
 		}
-		//         # merge conflicting return edges of e_1,...,e_i-1 into P.L
-		//         while top_of_stack(self.S).left.conflicting(ei, self) or top_of_stack(
-		//             self.S
-		//         ).right.conflicting(ei, self):
+		// # merge conflicting return edges of e_1,...,e_i-1 into P.L
+		// while top_of_stack(self.S).left.conflicting(ei, self) or top_of_stack(
+		//     self.S
+		// ).right.conflicting(ei, self):
 		while (!S.empty() && (S.back().left.conflicting(ei, *this) || S.back().right.conflicting(ei, *this))) {
-			//             Q = self.S.pop()
+			// Q = self.S.pop()
 			ConflictPair Q = S.back();
 			S.pop_back();
-			//             if Q.right.conflicting(ei, self):
-			//                 Q.swap()
+			// if Q.right.conflicting(ei, self):
+			//     Q.swap()
 			if (Q.right.conflicting(ei, *this)) {
 				Q.swap();
 			}
-			//             if Q.right.conflicting(ei, self):  # not planar
-			//                 return False
+			// if Q.right.conflicting(ei, self):  # not planar
+			//     return False
 			if (Q.right.conflicting(ei, *this)) {
 				return false;
 			}
-			//             # merge interval below lowpt(e_i) into P.R
-			//             self.ref[P.right.low] = Q.right.high
-			//             if Q.right.low is not None:
-			//                 P.right.low = Q.right.low
+			// # merge interval below lowpt(e_i) into P.R
+			// self.ref[P.right.low] = Q.right.high
+			// if Q.right.low is not None:
+			//     P.right.low = Q.right.low
 			ref[P.right.low] = Q.right.high;
 			if (Q.right.low != -1) {
 				P.right.low = Q.right.low;
 			}
 
-			//             if P.left.empty():  # topmost interval
-			//                 P.left = Q.left.copy()
-			//             else:
-			//                 self.ref[P.left.low] = Q.left.high
-			//             P.left.low = Q.left.low
+			// if P.left.empty():  # topmost interval
+			//     P.left = Q.left.copy()
+			// else:
+			//     self.ref[P.left.low] = Q.left.high
+			// P.left.low = Q.left.low
 			if (P.left.empty()) {
 				P.left = Q.left.copy();
 			} else {
@@ -737,26 +737,26 @@ struct LRPlanarity {
 			P.left.low = Q.left.low;
 		}
 
-		//         if not (P.left.empty() and P.right.empty()):
-		//             self.S.append(P)
-		//         return True
+		// if not (P.left.empty() and P.right.empty()):
+		//     self.S.append(P)
+		// return True
 		if (!(P.left.empty() && P.right.empty())) {
 			S.push_back(P);
 		}
 		return true;
 	}
 
-	//     def remove_back_edges(self, e):
+	// def remove_back_edges(self, e):
 	void remove_back_edges(int e) {
-		//         u = e[0]
+		// u = e[0]
 		int u = tail(e);
-		//         # trim back edges ending at parent u
-		//         # drop entire conflict pairs
-		//         while self.S and top_of_stack(self.S).lowest(self) == self.height[u]:
+		// # trim back edges ending at parent u
+		// # drop entire conflict pairs
+		// while self.S and top_of_stack(self.S).lowest(self) == self.height[u]:
 		while (!S.empty() && S.back().lowest(*this) == height[u]) {
-			//             P = self.S.pop()
-			//             if P.left.low is not None:
-			//                 self.side[P.left.low] = -1
+			// P = self.S.pop()
+			// if P.left.low is not None:
+			//     self.side[P.left.low] = -1
 			ConflictPair P = S.back();
 			S.pop_back();
 			if (P.left.low != -1) {
@@ -764,59 +764,59 @@ struct LRPlanarity {
 			}
 		}
 
-		//         if self.S:  # one more conflict pair to consider
+		// if self.S:  # one more conflict pair to consider
 		if (!S.empty()) {
-			//             P = self.S.pop()
+			// P = self.S.pop()
 			ConflictPair P = S.back();
 			S.pop_back();
-			//             # trim left interval
-			//             while P.left.high is not None and P.left.high[1] == u:
-			//                 P.left.high = self.ref[P.left.high]
+			// # trim left interval
+			// while P.left.high is not None and P.left.high[1] == u:
+			//     P.left.high = self.ref[P.left.high]
 			while (P.left.high != -1 && head(P.left.high) == u) {
 				P.left.high = ref[P.left.high];
 			}
-			//             if P.left.high is None and P.left.low is not None:
-			//                 # just emptied
-			//                 self.ref[P.left.low] = P.right.low
-			//                 self.side[P.left.low] = -1
-			//                 P.left.low = None
+			// if P.left.high is None and P.left.low is not None:
+			//     # just emptied
+			//     self.ref[P.left.low] = P.right.low
+			//     self.side[P.left.low] = -1
+			//     P.left.low = None
 			if (P.left.high == -1 && P.left.low != -1) {
 				ref[P.left.low] = P.right.low;
 				side[P.left.low] = -1;
 				P.left.low = -1;
 			}
-			//             # trim right interval
-			//             while P.right.high is not None and P.right.high[1] == u:
-			//                 P.right.high = self.ref[P.right.high]
+			// # trim right interval
+			// while P.right.high is not None and P.right.high[1] == u:
+			//     P.right.high = self.ref[P.right.high]
 			while (P.right.high != -1 && head(P.right.high) == u) {
 				P.right.high = ref[P.right.high];
 			}
-			//             if P.right.high is None and P.right.low is not None:
-			//                 # just emptied
-			//                 self.ref[P.right.low] = P.left.low
-			//                 self.side[P.right.low] = -1
-			//                 P.right.low = None
+			// if P.right.high is None and P.right.low is not None:
+			//     # just emptied
+			//     self.ref[P.right.low] = P.left.low
+			//     self.side[P.right.low] = -1
+			//     P.right.low = None
 			if (P.right.high == -1 && P.right.low != -1) {
 				ref[P.right.low] = P.left.low;
 				side[P.right.low] = -1;
 				P.right.low = -1;
 			}
-			//             self.S.append(P)
+			// self.S.append(P)
 			S.push_back(P);
 		}
 
-		//         # side of e is side of a highest return edge
-		//         if self.lowpt[e] < self.height[u]:  # e has return edge
+		// # side of e is side of a highest return edge
+		// if self.lowpt[e] < self.height[u]:  # e has return edge
 		if (lowpt[e] < height[u]) {
-			//             hl = top_of_stack(self.S).left.high
-			//             hr = top_of_stack(self.S).right.high
+			// hl = top_of_stack(self.S).left.high
+			// hr = top_of_stack(self.S).right.high
 			int hl = S.back().left.high;
 			int hr = S.back().right.high;
 
-			//             if hl is not None and (hr is None or self.lowpt[hl] > self.lowpt[hr]):
-			//                 self.ref[e] = hl
-			//             else:
-			//                 self.ref[e] = hr
+			// if hl is not None and (hr is None or self.lowpt[hl] > self.lowpt[hr]):
+			//     self.ref[e] = hl
+			// else:
+			//     self.ref[e] = hr
 			if (hl != -1 && (hr == -1 || lowpt[hl] > lowpt[hr])) {
 				ref[e] = hl;
 			} else {
@@ -825,53 +825,53 @@ struct LRPlanarity {
 		}
 	}
 
-	//     def dfs_embedding(self, v):
-	//         """Completes the embedding."""
+	// def dfs_embedding(self, v):
+	//     """Completes the embedding."""
 	void dfs_embedding(int v) {
-		//         # the recursion stack
-		//         dfs_stack = [v]
+		// # the recursion stack
+		// dfs_stack = [v]
 		std::vector<int> dfs_stack = {v};
-		//         # index of next edge to handle in adjacency list of each node
-		//         ind = defaultdict(lambda: 0)
+		// # index of next edge to handle in adjacency list of each node
+		// ind = defaultdict(lambda: 0)
 
-		//         while dfs_stack:
+		// while dfs_stack:
 		while (!dfs_stack.empty()) {
-			//             v = dfs_stack.pop()
+			// v = dfs_stack.pop()
 			v = dfs_stack.back();
 			dfs_stack.pop_back();
 
-			//             for w in self.ordered_adjs[v][ind[v] :]:
+			// for w in self.ordered_adjs[v][ind[v] :]:
 			while (ind[v] < int(ordered_adjs[v].size())) {
-				//                 ind[v] += 1
-				//                 ei = (v, w)
+				// ind[v] += 1
+				// ei = (v, w)
 				int ei = ordered_adjs[v][ind[v]];
 				int w = head(ei);
 				ind[v] += 1;
 
-				//                 if ei == self.parent_edge[w]:  # tree edge
+				// if ei == self.parent_edge[w]:  # tree edge
 				if (ei == parent_edge[w]) {
-					//                     self.embedding.add_half_edge_first(w, v)
-					//                     self.left_ref[v] = w
-					//                     self.right_ref[v] = w
+					// self.embedding.add_half_edge_first(w, v)
+					// self.left_ref[v] = w
+					// self.right_ref[v] = w
 					embedding.add_half_edge_first(w, ei ^ 1);
 					left_ref[v] = ei;
 					right_ref[v] = ei;
 
-					//                     dfs_stack.append(v)  # revisit v after finishing w
-					//                     dfs_stack.append(w)  # visit w next
-					//                     break  # handle next node in dfs_stack (i.e. w)
+					// dfs_stack.append(v)  # revisit v after finishing w
+					// dfs_stack.append(w)  # visit w next
+					// break  # handle next node in dfs_stack (i.e. w)
 					dfs_stack.push_back(v);
 					dfs_stack.push_back(w);
 					break;
-				//                 else:  # back edge
+				// else:  # back edge
 				} else {
-					//                     if self.side[ei] == 1:
-					//                         self.embedding.add_half_edge(w, v, ccw=self.right_ref[w])
+					// if self.side[ei] == 1:
+					//     self.embedding.add_half_edge(w, v, ccw=self.right_ref[w])
 					if (side[ei] == 1) {
 						embedding.add_half_edge(w, ei ^ 1, -1, right_ref[w]);
-					//                     else:
-					//                         self.embedding.add_half_edge(w, v, cw=self.left_ref[w])
-					//                         self.left_ref[w] = v
+					// else:
+					//     self.embedding.add_half_edge(w, v, cw=self.left_ref[w])
+					//     self.left_ref[w] = v
 					} else {
 						embedding.add_half_edge(w, ei ^ 1, left_ref[w], -1);
 						left_ref[w] = ei ^ 1;
@@ -881,33 +881,33 @@ struct LRPlanarity {
 		}
 	}
 
-	//     def sign(self, e):
-	//         """Resolve the relative side of an edge to the absolute side."""
+	// def sign(self, e):
+	//     """Resolve the relative side of an edge to the absolute side."""
 	int sign(int e) {
-		//         # the recursion stack
-		//         dfs_stack = [e]
+		// # the recursion stack
+		// dfs_stack = [e]
 		std::vector<int> dfs_stack = {e};
-		//         # dict to remember reference edges
-		//         old_ref = defaultdict(lambda: None)
+		// # dict to remember reference edges
+		// old_ref = defaultdict(lambda: None)
 
-		//         while dfs_stack:
+		// while dfs_stack:
 		while (!dfs_stack.empty()) {
-			//             e = dfs_stack.pop()
+			// e = dfs_stack.pop()
 			e = dfs_stack.back();
 			dfs_stack.pop_back();
 
-			//             if self.ref[e] is not None:
+			// if self.ref[e] is not None:
 			if (ref[e] != -1) {
-				//                 dfs_stack.append(e)  # revisit e after finishing self.ref[e]
-				//                 dfs_stack.append(self.ref[e])  # visit self.ref[e] next
-				//                 old_ref[e] = self.ref[e]  # remember value of self.ref[e]
-				//                 self.ref[e] = None
+				// dfs_stack.append(e)  # revisit e after finishing self.ref[e]
+				// dfs_stack.append(self.ref[e])  # visit self.ref[e] next
+				// old_ref[e] = self.ref[e]  # remember value of self.ref[e]
+				// self.ref[e] = None
 				dfs_stack.push_back(e);
 				dfs_stack.push_back(ref[e]);
 				old_ref[e] = ref[e];
 				ref[e] = -1;
-			//             else:
-			//                 self.side[e] *= self.side[old_ref[e]]
+			// else:
+			//     self.side[e] *= self.side[old_ref[e]]
 			// (old_ref is fresh per call and side[None] == 1, so an edge whose ref
 			// was already resolved by an earlier call is left unchanged; resetting
 			// old_ref[e] after use reproduces that with one shared vector.)
@@ -917,7 +917,7 @@ struct LRPlanarity {
 			}
 		}
 
-		//         return self.side[e]
+		// return self.side[e]
 		return side[e];
 	}
 };
