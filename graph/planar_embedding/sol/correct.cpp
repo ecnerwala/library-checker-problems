@@ -40,7 +40,6 @@ int _ReadPostprocess(graphP, char *) { return OK; }
 int _WritePostprocess(graphP, char **) { return OK; }
 
 
-#include <cstdint>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -55,12 +54,10 @@ int main() {
         std::cin >> N >> M;
         std::vector<std::pair<int, int>> edges(M);
         for (auto& [a, b] : edges) std::cin >> a >> b;
-        if (N >= 3 && int64_t(M) > int64_t(3) * N - 6) {
-            std::cout << "No\n";
-            continue;
-        }
         // The library uses 1-based vertex indices (USE_1BASEDARRAYS).
+        // The default edge capacity is 3N; nonplanar inputs may have more edges.
         graphP g = gp_New();
+        if (M > 0 && gp_EnsureEdgeCapacity(g, M) != OK) return 1;
         if (gp_EnsureVertexCapacity(g, N) != OK) return 1;
         for (auto [a, b] : edges) {
             if (gp_AddEdge(g, a + 1, 0, b + 1, 0) != OK) return 1;
