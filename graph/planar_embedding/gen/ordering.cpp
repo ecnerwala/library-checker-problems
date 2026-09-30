@@ -33,7 +33,7 @@ Graph ordered_graph(Random& gen, int base, int order) {
 		g = random_deep_tree(gen, n - sub.n, 2);
 		int off = g.add_graph(sub);
 		g.add_edge(gen.uniform(0, off - 1), off + gen.uniform(0, sub.n - 1));
-	} else if (base == 2) g = random_edge_subset(gen, random_triangulation(gen, n, 3LL * n), 0.6);
+	} else if (base == 2) g = random_edge_subset(gen, random_triangulation(gen, n, int64_t(3) * n), 0.6);
 	else g = random_two_tree(gen, n);
 
 	if (order >= 2) {

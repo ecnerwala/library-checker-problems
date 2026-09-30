@@ -12,7 +12,7 @@ Graph chorded_cycle(Random& gen, int n) {
 }
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
+	int64_t seed = atoll(argv[1]);
 	Random gen(seed);
 	std::vector<Graph> gs;
 	if (seed % 2 == 0) {
@@ -25,7 +25,7 @@ int main(int, char* argv[]) {
 	} else {
 		gs.push_back(chorded_cycle(gen, 333333));
 	}
-	long long tot = 0;
+	int64_t tot = 0;
 	for (auto& g : gs) tot += int(g.edges.size());
 	assert(tot <= M_MAX);
 	print_graphs(gen, gs);

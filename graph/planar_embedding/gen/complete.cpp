@@ -6,7 +6,7 @@
 #include "../params.h"
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
+	int64_t seed = atoll(argv[1]);
 	Random gen(seed);
 	std::vector<Graph> gs;
 	switch (seed % 3) {
@@ -17,7 +17,7 @@ int main(int, char* argv[]) {
 		case 1: gs = {complete_graph(1414)}; break;
 		default: gs = {complete_bipartite(2, 500000)}; break;
 	}
-	long long tot = 0;
+	int64_t tot = 0;
 	for (auto& g : gs) tot += int(g.edges.size());
 	assert(tot <= M_MAX);
 	print_graphs(gen, gs);

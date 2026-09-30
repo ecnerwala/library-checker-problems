@@ -6,21 +6,21 @@
 #include "../params.h"
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
+	int64_t seed = atoll(argv[1]);
 	Random gen(seed);
 	std::vector<Graph> gs;
 	if (seed % 2 == 0) {
 		for (int n : {1000, 30000}) {
-			Graph g = random_triangulation(gen, n, 4LL * n);
+			Graph g = random_triangulation(gen, n, int64_t(4) * n);
 			gs.push_back(g);
 			Graph h = g; add_random_nonedges(gen, h, 1);
 			gs.push_back(h);
 			gs.push_back(random_edge_subset(gen, g, gen.uniform01() * 0.6 + 0.3));
 		}
 	} else {
-		gs.push_back(random_triangulation(gen, 333334, 4LL * 333334));
+		gs.push_back(random_triangulation(gen, 333334, int64_t(4) * 333334));
 	}
-	long long tot = 0;
+	int64_t tot = 0;
 	for (auto& g : gs) tot += int(g.edges.size());
 	assert(tot <= M_MAX);
 	print_graphs(gen, gs);

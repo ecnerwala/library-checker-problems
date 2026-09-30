@@ -9,7 +9,7 @@ int main(int, char* argv[]) {
 	for (int i = 0; i < 4; i++) {
 		auto [n, k] = nk[i];
 		Graph g;
-		if (i % 2 == 0) g = random_edge_subset(gen, random_triangulation(gen, n, 3LL * n), 0.5);
+		if (i % 2 == 0) g = random_edge_subset(gen, random_triangulation(gen, n, int64_t(3) * n), 0.5);
 		else g = random_edge_subset(gen, random_two_tree(gen, n), 0.9);
 		add_random_nonedges(gen, g, k);
 		gs.push_back(g);

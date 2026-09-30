@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdint>
 #include <utility>
 #include <vector>
 #include "testlib.h"
@@ -12,7 +13,7 @@ int main(int argc, char* argv[]) {
   int t = inf.readInt(T_MIN, T_MAX, "T");
   inf.readChar('\n');
 
-  long long n_sum = 0, m_sum = 0;
+  int64_t n_sum = 0, m_sum = 0;
   for (int tc = 0; tc < t; tc++) {
     int n = inf.readInt(N_MIN, N_MAX, "N");
     inf.readSpace();

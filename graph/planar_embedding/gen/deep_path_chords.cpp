@@ -4,13 +4,13 @@
 #include "../params.h"
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
+	int64_t seed = atoll(argv[1]);
 	Random gen(seed);
 	int ks[] = {50, 1};
 	int n = N_MAX - 100;
 	Graph g = path_graph(n);
 	Edges chords;
-	std::unordered_set<long long> seen;
+	std::unordered_set<int64_t> seen;
 	while (int(chords.size()) < ks[seed % 2]) {
 		auto [u, v] = gen.uniform_pair(0, n - 1);
 		if (v - u <= 1 && u - v <= 1) continue;

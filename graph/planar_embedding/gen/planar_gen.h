@@ -1,6 +1,7 @@
 #pragma once
 // Shared helpers for the planar_embedding generators.
 #include <cstdio>
+#include <cstdint>
 #include <cstdlib>
 #include <vector>
 #include <string>
@@ -40,15 +41,15 @@ struct Graph {
 	}
 };
 
-inline long long edge_key(int u, int v) {
+inline int64_t edge_key(int u, int v) {
 	if (u > v) std::swap(u, v);
-	return (long long)u * 2000003LL + v;
+	return int64_t(u) * 2000003 + v;
 }
 
 // Removes duplicate edges (in either orientation) and self-loops.
 inline void dedup(Graph& g) {
 	Edges out;
-	std::unordered_set<long long> seen;
+	std::unordered_set<int64_t> seen;
 	seen.reserve(g.edges.size() * 2);
 	for (auto [u, v] : g.edges) {
 		if (u == v) continue;
@@ -289,12 +290,12 @@ inline Graph random_apollonian(Random& gen, int n) {
 }
 // Random planar triangulation on n >= 3 vertices, obtained from a fan
 // triangulation by `flips` random edge flips (Delaunay-like mixing). Maximal planar.
-inline Graph random_triangulation(Random& gen, int n, long long flips) {
+inline Graph random_triangulation(Random& gen, int n, int64_t flips) {
 	assert(n >= 3);
 	// Start from a "double fan": vertices 1..n-2 form a path, all adjacent to 0 (one side) and n-1 (other side).
 	// Faces are oriented consistently; apex[(u,v)] is the third vertex of the face on the left of u->v.
-	std::unordered_map<long long, int> apex;
-	auto dkey = [](int u, int v) { return (long long)u * 2000003LL + v; };
+	std::unordered_map<int64_t, int> apex;
+	auto dkey = [](int u, int v) { return int64_t(u) * 2000003 + v; };
 	auto set_face = [&](int a, int b, int c) {
 		apex[dkey(a, b)] = c; apex[dkey(b, c)] = a; apex[dkey(c, a)] = b;
 	};
@@ -316,7 +317,7 @@ inline Graph random_triangulation(Random& gen, int n, long long flips) {
 		for (int i = 1; i <= n - 2; i++) { edges.emplace_back(0, i); edges.emplace_back(t, i); }
 		for (int i = 1; i + 1 <= n - 2; i++) edges.emplace_back(i, i + 1);
 	}
-	for (long long f = 0; f < flips; f++) {
+	for (int64_t f = 0; f < flips; f++) {
 		int ei = gen.uniform<int>(0, int(edges.size()) - 1);
 		auto [u, v] = edges[ei];
 		auto ia = apex.find(dkey(u, v)), ib = apex.find(dkey(v, u));
@@ -380,7 +381,7 @@ inline Graph random_edge_sample(Random& gen, Graph g, int keep) {
 }
 // Adds `k` random new edges that are not already present (and not loops).
 inline void add_random_nonedges(Random& gen, Graph& g, int k) {
-	std::unordered_set<long long> seen;
+	std::unordered_set<int64_t> seen;
 	seen.reserve(g.edges.size() * 2 + 16);
 	for (auto [u, v] : g.edges) seen.insert(edge_key(u, v));
 	assert(g.n >= 2);

@@ -40,77 +40,51 @@ int _ReadPostprocess(graphP, char *) { return OK; }
 int _WritePostprocess(graphP, char **) { return OK; }
 
 
-#include <string>
-
-namespace {
-
-char inbuf[1 << 16];
-int inbuf_len = 0, inbuf_pos = 0;
-inline int read_char() {
-    if (inbuf_pos == inbuf_len) {
-        inbuf_len = int(fread(inbuf, 1, sizeof(inbuf), stdin));
-        inbuf_pos = 0;
-        if (inbuf_len <= 0) return -1;
-    }
-    return inbuf[inbuf_pos++];
-}
-inline int read_int() {
-    int c = read_char();
-    while (c < '0' || c > '9') { if (c == -1) return 0; c = read_char(); }
-    int x = 0;
-    while (c >= '0' && c <= '9') { x = x * 10 + (c - '0'); c = read_char(); }
-    return x;
-}
-void append_int(std::string& out, int x) {
-    char tmp[12];
-    int len = 0;
-    if (x == 0) tmp[len++] = '0';
-    while (x > 0) { tmp[len++] = char('0' + x % 10); x /= 10; }
-    while (len > 0) out += tmp[--len];
-}
-
-} // namespace
+#include <cstdint>
+#include <iostream>
+#include <utility>
+#include <vector>
 
 int main() {
-    int T = read_int();
-    std::string out;
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    int T;
+    std::cin >> T;
     while (T--) {
-        int N = read_int();
-        int M = read_int();
-        if (N >= 3 && (long long)M > 3LL * N - 6) {
-            for (int i = 0; i < 2 * M; i++) read_int();
-            out += "No\n";
+        int N, M;
+        std::cin >> N >> M;
+        std::vector<std::pair<int, int>> edges(M);
+        for (auto& [a, b] : edges) std::cin >> a >> b;
+        if (N >= 3 && int64_t(M) > int64_t(3) * N - 6) {
+            std::cout << "No\n";
             continue;
         }
         // The library uses 1-based vertex indices (USE_1BASEDARRAYS).
         graphP g = gp_New();
         if (gp_EnsureVertexCapacity(g, N) != OK) return 1;
-        for (int i = 0; i < M; i++) {
-            int a = read_int();
-            int b = read_int();
+        for (auto [a, b] : edges) {
             if (gp_AddEdge(g, a + 1, 0, b + 1, 0) != OK) return 1;
         }
         int r = gp_Embed(g, EMBEDFLAGS_PLANAR);
         if (r == OK) {
             // gp_Embed leaves the vertices in DFS order; restore the input numbering.
             if (gp_SortVertices(g) != OK) return 1;
-            out += "Yes\n";
+            std::cout << "Yes\n";
             for (int v = gp_LowerBoundVertices(g); v < gp_UpperBoundVertices(g); v++) {
                 bool first = true;
                 for (int e = gp_GetFirstEdge(g, v); gp_IsEdge(g, e); e = gp_GetNextEdge(g, e)) {
-                    if (!first) out += ' ';
+                    if (!first) std::cout << ' ';
                     first = false;
-                    append_int(out, gp_GetNeighbor(g, e) - 1);
+                    std::cout << gp_GetNeighbor(g, e) - 1;
                 }
-                out += '\n';
+                std::cout << '\n';
             }
         } else if (r == NONEMBEDDABLE) {
-            out += "No\n";
+            std::cout << "No\n";
         } else {
             return 1;
         }
         gp_Free(&g);
     }
-    fwrite(out.data(), 1, out.size(), stdout);
     return 0;
 }

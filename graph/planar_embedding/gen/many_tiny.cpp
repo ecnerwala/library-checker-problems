@@ -4,7 +4,7 @@
 #include "../params.h"
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
+	int64_t seed = atoll(argv[1]);
 	Random gen(seed);
 	const int T = int(T_MAX);
 	const int n_budget = int(N_MAX), m_budget = int(M_MAX);

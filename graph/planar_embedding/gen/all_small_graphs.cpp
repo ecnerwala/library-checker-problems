@@ -121,7 +121,7 @@ Graph to_graph(const Small& g) {
 }  // namespace
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
+	int64_t seed = atoll(argv[1]);
 	Random gen(seed);
 	std::vector<Graph> gs;
 

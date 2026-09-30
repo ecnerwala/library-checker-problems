@@ -30,7 +30,7 @@ void append_case(std::string& buf, Random& gen, int mode, int host_n, int len_lo
 }
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
+	int64_t seed = atoll(argv[1]);
 	Random gen(seed);
 	std::string buf;
 	if (seed % 2 == 0) {

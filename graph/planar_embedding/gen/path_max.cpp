@@ -4,7 +4,7 @@
 #include "../params.h"
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
+	int64_t seed = atoll(argv[1]);
 	Random gen(seed);
 	Graph g = path_graph(N_MAX);
 	bool shuf = seed % 2 == 1;

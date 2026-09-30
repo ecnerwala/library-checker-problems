@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdint>
 #include <numeric>
 #include <string>
 #include <vector>
@@ -119,7 +120,7 @@ void read_embedding(const Graph& g, InStream& stream, int tc) {
       ncomp++;
     }
   }
-  vector<long long> V(ncomp, 0), E(ncomp, 0), F(ncomp, 0);
+  vector<int> V(ncomp, 0), E(ncomp, 0), F(ncomp, 0);
   for (int v = 0; v < n; v++) {
     if (comp[v] == -1) continue;
     V[comp[v]]++;
@@ -142,7 +143,7 @@ void read_embedding(const Graph& g, InStream& stream, int tc) {
   for (int c = 0; c < ncomp; c++) {
     if (V[c] - E[c] + F[c] != 2) {
       stream.quitf(_wa,
-                   "case %d: rotation system is not planar (component with V=%lld, E=%lld has F=%lld)",
+                   "case %d: rotation system is not planar (component with V=%d, E=%d has F=%d)",
                    tc, V[c], E[c], F[c]);
     }
   }

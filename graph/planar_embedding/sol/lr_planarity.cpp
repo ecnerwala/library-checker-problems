@@ -1,32 +1,13 @@
 // Independent cross-check: iterative left-right planarity test and embedding
 // (U. Brandes, "The Left-Right Planarity Test", 2009), following the
 // structure of networkx's networkx/algorithms/planarity.py.
-#include <cstdio>
+#include <iostream>
 #include <vector>
 #include <array>
 #include <algorithm>
 #include <cassert>
-#include <string>
 
 namespace {
-
-char buf[1 << 16];
-int buf_len = 0, buf_pos = 0;
-inline int read_char() {
-	if (buf_pos == buf_len) {
-		buf_len = int(fread(buf, 1, sizeof(buf), stdin));
-		buf_pos = 0;
-		if (buf_len <= 0) return -1;
-	}
-	return buf[buf_pos++];
-}
-inline int read_int() {
-	int c = read_char();
-	while (c < '0' || c > '9') { if (c == -1) return 0; c = read_char(); }
-	int x = 0;
-	while (c >= '0' && c <= '9') { x = x * 10 + (c - '0'); c = read_char(); }
-	return x;
-}
 
 struct Interval {
 	int low = -1, high = -1;
@@ -387,49 +368,41 @@ struct LRPlanarity {
 	}
 };
 
-void append_int(std::string& out, int x) {
-	char tmp[12];
-	int len = 0;
-	if (x == 0) tmp[len++] = '0';
-	while (x > 0) { tmp[len++] = char('0' + x % 10); x /= 10; }
-	while (len > 0) out += tmp[--len];
-}
-
 } // namespace
 
 int main() {
-	int T = read_int();
-	std::string out;
+	std::ios::sync_with_stdio(false);
+	std::cin.tie(nullptr);
+	int T;
+	std::cin >> T;
 	while (T--) {
-		int N = read_int();
-		int M = read_int();
+		int N, M;
+		std::cin >> N >> M;
 		std::vector<std::array<int, 2>> edges(M);
 		for (auto& e : edges) {
-			e[0] = read_int();
-			e[1] = read_int();
+			std::cin >> e[0] >> e[1];
 		}
 		LRPlanarity lr(N, std::move(edges));
 		if (!lr.is_planar()) {
-			out += "No\n";
+			std::cout << "No\n";
 			continue;
 		}
 		lr.embed();
-		out += "Yes\n";
+		std::cout << "Yes\n";
 		for (int v = 0; v < N; v++) {
 			int d0 = lr.first_dart[v];
 			if (d0 != -1) {
 				int d = d0;
 				bool first = true;
 				do {
-					if (!first) out += ' ';
+					if (!first) std::cout << ' ';
 					first = false;
-					append_int(out, lr.dart_neighbor(d));
+					std::cout << lr.dart_neighbor(d);
 					d = lr.cw[d];
 				} while (d != d0);
 			}
-			out += '\n';
+			std::cout << '\n';
 		}
 	}
-	fwrite(out.data(), 1, out.size(), stdout);
 	return 0;
 }
