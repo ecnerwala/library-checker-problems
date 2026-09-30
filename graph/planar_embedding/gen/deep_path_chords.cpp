@@ -6,7 +6,7 @@
 int main(int, char* argv[]) {
 	long long seed = atoll(argv[1]);
 	Random gen(seed);
-	int ks[] = {1, 50};
+	int ks[] = {50, 1};
 	int n = N_MAX - 100;
 	Graph g = path_graph(n);
 	Edges chords;

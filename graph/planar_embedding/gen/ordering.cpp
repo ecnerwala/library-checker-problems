@@ -1,7 +1,6 @@
-// Adversarial vertex / edge orderings of a few base graphs (N ~ 2 * 10^5):
-//   base (seed / 2): Moebius ladder (No), K3,3 subdivision in a deep tree (No),
-//                    triangulation subset (Yes), 2-tree (Yes)
-//   order (seed % 2): 0: natural labels, edges sorted; 1: DFS labels, edges reversed and flipped
+// Adversarial vertex / edge orderings of a few base graphs (N = 60000 each):
+//   base: Moebius ladder (No), K3,3 subdivision in a deep tree (No), triangulation subset (Yes), 2-tree (Yes)
+//   order: natural labels with edges sorted; and DFS labels with edges reversed and flipped
 #include "planar_gen.h"
 #include "../params.h"
 
@@ -25,19 +24,17 @@ std::vector<int> bfs_order(const Graph& g, Random& gen, bool dfs) {
 	return label;
 }
 
-int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
-	Random gen(seed);
-	int base = (seed / 2) % 4, order = seed % 2 == 0 ? 0 : 3;
+Graph ordered_graph(Random& gen, int base, int order) {
+	const int n = 60000;
 	Graph g;
-	if (base == 0) g = moebius_ladder(200000);
+	if (base == 0) g = moebius_ladder(n);
 	else if (base == 1) {
-		Graph sub = subdivide_edges(gen, complete_bipartite(3, 3), 1000, 3000);
-		g = random_deep_tree(gen, 200000 - sub.n, 2);
+		Graph sub = subdivide_edges(gen, complete_bipartite(3, 3), 300, 1000);
+		g = random_deep_tree(gen, n - sub.n, 2);
 		int off = g.add_graph(sub);
 		g.add_edge(gen.uniform(0, off - 1), off + gen.uniform(0, sub.n - 1));
-	} else if (base == 2) g = random_edge_subset(gen, random_triangulation(gen, 200000, 600000), 0.6);
-	else g = random_two_tree(gen, 200000);
+	} else if (base == 2) g = random_edge_subset(gen, random_triangulation(gen, n, 3LL * n), 0.6);
+	else g = random_two_tree(gen, n);
 
 	if (order >= 2) {
 		auto label = bfs_order(g, gen, order == 3);
@@ -47,7 +44,13 @@ int main(int, char* argv[]) {
 	std::sort(g.edges.begin(), g.edges.end());
 	if (order == 1 || order == 3) std::reverse(g.edges.begin(), g.edges.end());
 	if (order == 3) for (auto& [u, v] : g.edges) std::swap(u, v);
-	assert(int(g.edges.size()) <= M_MAX);
-	print_graph(gen, g, false, false, false);
+	return g;
+}
+
+int main(int, char* argv[]) {
+	Random gen(atoll(argv[1]));
+	std::vector<Graph> gs;
+	for (int base = 0; base < 4; base++) for (int order : {0, 3}) gs.push_back(ordered_graph(gen, base, order));
+	print_graphs(gen, gs, false, false, false);
 	return 0;
 }

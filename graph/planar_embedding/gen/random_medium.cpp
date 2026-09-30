@@ -1,14 +1,13 @@
-// Random simple graphs with M around N (near the planarity threshold for random graphs).
+// Uniformly random simple graphs with M around N / 2 (the planarity threshold of random graphs) and above.
 #include "planar_gen.h"
-#include "../params.h"
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
-	Random gen(seed);
+	Random gen(atoll(argv[1]));
+	std::vector<Graph> gs;
+	double fs[] = {0.3, 0.45, 0.55, 0.7, 1.0, 1.5};
 	int ns[] = {50, 200, 1000, 5000, 20000, 100000};
-	double fs[] = {0.7, 0.9, 1.0, 1.1, 1.3, 1.6};
-	int n = ns[gen.uniform(0, 5)];
-	int m = int(n * fs[gen.uniform(0, 5)]);
-	print_graph(gen, random_simple_graph(gen, n, m));
+	auto perm = gen.perm<int>(6);
+	for (int i = 0; i < 6; i++) gs.push_back(random_simple_graph(gen, ns[i], int(ns[i] * fs[perm[i]])));
+	print_graphs(gen, gs);
 	return 0;
 }

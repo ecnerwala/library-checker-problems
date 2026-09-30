@@ -1,13 +1,8 @@
-// Random Apollonian network (stacked triangulation, maximal planar, Yes).
+// Random Apollonian networks (planar 3-trees, maximal planar).
 #include "planar_gen.h"
-#include "../params.h"
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
-	Random gen(seed);
-	int n = 333335;
-	Graph g = random_apollonian(gen, n);
-	assert(int(g.edges.size()) <= M_MAX);
-	print_graph(gen, g);
+	Random gen(atoll(argv[1]));
+	print_graphs(gen, {random_apollonian(gen, 1000), random_apollonian(gen, 100000)});
 	return 0;
 }

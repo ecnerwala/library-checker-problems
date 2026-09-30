@@ -13,7 +13,7 @@ int main(int, char* argv[]) {
 	int n_sum = 0, m_sum = 0;
 	for (int t = 0; t < T; t++) {
 		int remaining = T - t - 1;
-		int n = seed % 2 == 0 ? avg_n : gen.uniform(1, 2 * avg_n - 2);
+		int n = seed % 2 == 1 ? avg_n : gen.uniform(1, 2 * avg_n - 2);
 		n = std::min(n, n_budget - n_sum - remaining);
 		int maxm = std::min(n * (n - 1) / 2, avg_m);
 		int m = gen.uniform(0, maxm);

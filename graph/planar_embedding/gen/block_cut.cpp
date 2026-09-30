@@ -1,15 +1,10 @@
 // Many small biconnected blocks (triangles, K4, wheels, small triangulations,
 // cycles, bridges) glued at cut vertices into a random block-cut tree (Yes).
-// Odd seeds replace one random block by K5 or the Petersen graph (No).
+// One case per size is planar; the other replaces one random block by K5 or the Petersen graph (No).
 #include "planar_gen.h"
 #include "../params.h"
 
-int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
-	Random gen(seed);
-	int ns[] = {10000, 400000};
-	int target = ns[(seed / 2) % 2];
-	bool bad = seed % 2 == 1;
+Graph block_graph(Random& gen, int target, bool bad) {
 	Graph g; g.add_vertex();
 	std::vector<Graph> blocks;
 	while (g.n < target) {
@@ -33,7 +28,16 @@ int main(int, char* argv[]) {
 		int off = g.add_vertices(b.n - 1) - 1;
 		for (auto [u, v] : b.edges) g.add_edge(u == 0 ? cut : u + off, v == 0 ? cut : v + off);
 	}
-	assert(g.n <= N_MAX && int(g.edges.size()) <= M_MAX);
-	print_graph(gen, g);
+	return g;
+}
+
+int main(int, char* argv[]) {
+	Random gen(atoll(argv[1]));
+	std::vector<Graph> gs;
+	for (int target : {10000, 100000}) {
+		gs.push_back(block_graph(gen, target, false));
+		gs.push_back(block_graph(gen, target, true));
+	}
+	print_graphs(gen, gs);
 	return 0;
 }

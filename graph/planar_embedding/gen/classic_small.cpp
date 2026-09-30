@@ -14,8 +14,9 @@ Graph minus_vertex(Graph g, int v) {
 }
 
 int main(int, char* argv[]) {
-	long long seed = atoll(argv[1]);
-	Random gen(seed);
+	Random gen(atoll(argv[1]));
+	std::vector<Graph> gs;
+	for (int seed = 0; seed < 18; seed++) {
 	Graph g;
 	switch (seed) {
 		case 0: g = petersen_graph(); break;                      // No (no K5 / K3,3 subgraph)
@@ -38,6 +39,8 @@ int main(int, char* argv[]) {
 		case 17: g = minus_vertex(petersen_graph(), gen.uniform(0, 9)); break;       // Petersen - v, No
 		default: assert(false);
 	}
-	print_graph(gen, g);
+	gs.push_back(g);
+	}
+	print_graphs(gen, gs);
 	return 0;
 }
