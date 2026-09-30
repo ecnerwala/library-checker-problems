@@ -40,6 +40,7 @@ int _ReadPostprocess(graphP, char *) { return OK; }
 int _WritePostprocess(graphP, char **) { return OK; }
 
 
+#include <cstdlib>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -57,15 +58,15 @@ int main() {
         // The library uses 1-based vertex indices (USE_1BASEDARRAYS).
         // The default edge capacity is 3N; nonplanar inputs may have more edges.
         graphP g = gp_New();
-        if (M > 0 && gp_EnsureEdgeCapacity(g, M) != OK) return 1;
-        if (gp_EnsureVertexCapacity(g, N) != OK) return 1;
+        if (M > 0 && gp_EnsureEdgeCapacity(g, M) != OK) std::exit(1);
+        if (gp_EnsureVertexCapacity(g, N) != OK) std::exit(1);
         for (auto [a, b] : edges) {
-            if (gp_AddEdge(g, a + 1, 0, b + 1, 0) != OK) return 1;
+            if (gp_AddEdge(g, a + 1, 0, b + 1, 0) != OK) std::exit(1);
         }
         int r = gp_Embed(g, EMBEDFLAGS_PLANAR);
         if (r == OK) {
             // gp_Embed leaves the vertices in DFS order; restore the input numbering.
-            if (gp_SortVertices(g) != OK) return 1;
+            if (gp_SortVertices(g) != OK) std::exit(1);
             std::cout << "Yes\n";
             for (int v = gp_LowerBoundVertices(g); v < gp_UpperBoundVertices(g); v++) {
                 bool first = true;
@@ -79,7 +80,7 @@ int main() {
         } else if (r == NONEMBEDDABLE) {
             std::cout << "No\n";
         } else {
-            return 1;
+            std::exit(1);
         }
         gp_Free(&g);
     }
