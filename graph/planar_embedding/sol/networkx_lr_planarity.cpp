@@ -137,17 +137,17 @@ struct ConflictPair {
 //     if not l:
 //         return None
 //     return l[-1]
-// (The stack entry is identified by its index; -1 stands for None.)
+// # translator's note: a stack entry is identified by its index; -1 stands for None.
 int top_of_stack(const std::vector<ConflictPair>& l) { return int(l.size()) - 1; }
 
 // class PlanarEmbedding(nx.DiGraph):
 //     """Represents a planar graph with its planar embedding.
 //     ...
 //     """
-// Only the half-edge insertion used by LRPlanarity is kept. Half-edge (v, w)
-// is the dart d; cw[d] / ccw[d] are the darts out of v that follow d in
-// clockwise / counterclockwise order; leftmost_nbr[v] is the dart from v to
-// its leftmost neighbor (-1 if v has no out-half-edge yet).
+// # translator's note: only the half-edge insertion used by LRPlanarity is kept.
+// # Half-edge (v, w) is the dart d; cw[d] / ccw[d] are the darts out of v that
+// # follow d in clockwise / counterclockwise order; leftmost_nbr[v] is the dart
+// # from v to its leftmost neighbor (-1 if v has no out-half-edge yet).
 struct PlanarEmbedding {
 	std::vector<int> cw, ccw, leftmost_nbr;
 
@@ -157,8 +157,8 @@ struct PlanarEmbedding {
 	//     """Adds a half-edge from `start_node` to `end_node`.
 	//     ...
 	//     """
-	// Here d = (start_node, end_node); cw_ref / ccw_ref are the darts
-	// (start_node, cw) / (start_node, ccw).
+	// # translator's note: d = (start_node, end_node); cw_ref / ccw_ref are the
+	// # darts (start_node, cw) / (start_node, ccw).
 	void add_half_edge(int start_node, int d, int cw_ref, int ccw_ref) {
 		// succs = self._succ.get(start_node)
 		// if succs:
@@ -264,7 +264,7 @@ struct LRPlanarity {
 	//     for e in G.edges:
 	//         if e[0] != e[1]:
 	//             self.G.add_edge(e[0], e[1])
-	// (The input is a simple graph; G is given by N and edges.)
+	// # translator's note: the input is a simple graph; G is given by N and edges.
 
 	//     self.roots = []
 	std::vector<int> roots;
@@ -285,8 +285,8 @@ struct LRPlanarity {
 	//     # oriented DFS graph
 	//     self.DG = nx.DiGraph()
 	//     self.DG.add_nodes_from(G.nodes)
-	// (in_DG[d]: whether dart d is an edge of DG; DG[v]: its out-darts in
-	// insertion order, like DiGraph successor iteration.)
+	// # translator's note: in_DG[d] tells whether dart d is an edge of DG; DG[v]
+	// # lists its out-darts in insertion order, like DiGraph successor iteration.
 	std::vector<char> in_DG;
 	std::vector<std::vector<int>> DG;
 
@@ -312,7 +312,8 @@ struct LRPlanarity {
 	//     self.embedding = PlanarEmbedding()
 	PlanarEmbedding embedding;
 
-	// per-DFS-call defaultdicts of dfs_orientation / dfs_testing / dfs_embedding / sign
+	// # translator's note: the per-call defaultdicts of dfs_orientation /
+	// # dfs_testing / dfs_embedding / sign, allocated once and reused.
 	std::vector<int> ind;
 	std::vector<char> skip_init;
 	std::vector<int> old_ref;
@@ -908,9 +909,9 @@ struct LRPlanarity {
 				ref[e] = -1;
 			// else:
 			//     self.side[e] *= self.side[old_ref[e]]
-			// (old_ref is fresh per call and side[None] == 1, so an edge whose ref
-			// was already resolved by an earlier call is left unchanged; resetting
-			// old_ref[e] after use reproduces that with one shared vector.)
+			// # translator's note: old_ref is fresh per call and side[None] == 1, so an
+			// # edge whose ref was already resolved by an earlier call is left unchanged;
+			// # resetting old_ref[e] after use reproduces that with one shared vector.
 			} else {
 				if (old_ref[e] != -1) side[e] *= side[old_ref[e]];
 				old_ref[e] = -1;
@@ -956,8 +957,9 @@ int main() {
 			continue;
 		}
 		std::cout << "Yes\n";
-		// networkx: embedding.neighbors_cw_order(v) starts at the first successor
-		// of v and follows the "cw" links; here we start at the leftmost neighbor.
+		// # translator's note: embedding.neighbors_cw_order(v) starts at the first
+		// # successor of v and follows the "cw" links; here we start at the leftmost
+		// # neighbor.
 		for (int v = 0; v < N; v++) {
 			int d0 = lr.embedding.leftmost_nbr[v];
 			if (d0 != -1) {
