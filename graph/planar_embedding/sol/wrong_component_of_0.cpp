@@ -98,10 +98,7 @@ struct Interval {
 
 	// def conflicting(self, b, planarity_state):
 	//     """Returns True if interval I conflicts with edge b"""
-	//     return (
-	//         not self.empty()
-	//         and planarity_state.lowpt[self.high] > planarity_state.lowpt[b]
-	//     )
+	// # translator's note: the body needs LRPlanarity's lowpt and is defined after the class.
 	bool conflicting(int b, const LRPlanarity& planarity_state) const;
 };
 
@@ -126,13 +123,7 @@ struct ConflictPair {
 
 	// def lowest(self, planarity_state):
 	//     """Returns the lowest lowpoint of a conflict pair"""
-	//     if self.left.empty():
-	//         return planarity_state.lowpt[self.right.low]
-	//     if self.right.empty():
-	//         return planarity_state.lowpt[self.left.low]
-	//     return min(
-	//         planarity_state.lowpt[self.left.low], planarity_state.lowpt[self.right.low]
-	//     )
+	// # translator's note: the body needs LRPlanarity's lowpt and is defined after the class.
 	int lowest(const LRPlanarity& planarity_state) const;
 };
 
@@ -926,17 +917,30 @@ struct LRPlanarity {
 	}
 };
 
+// def conflicting(self, b, planarity_state):
 bool Interval::conflicting(int b, const LRPlanarity& planarity_state) const {
+	// return (
+	//     not self.empty()
+	//     and planarity_state.lowpt[self.high] > planarity_state.lowpt[b]
+	// )
 	return !empty() && planarity_state.lowpt[high] > planarity_state.lowpt[b];
 }
 
+// def lowest(self, planarity_state):
 int ConflictPair::lowest(const LRPlanarity& planarity_state) const {
+	// if self.left.empty():
+	//     return planarity_state.lowpt[self.right.low]
 	if (left.empty()) {
 		return planarity_state.lowpt[right.low];
 	}
+	// if self.right.empty():
+	//     return planarity_state.lowpt[self.left.low]
 	if (right.empty()) {
 		return planarity_state.lowpt[left.low];
 	}
+	// return min(
+	//     planarity_state.lowpt[self.left.low], planarity_state.lowpt[self.right.low]
+	// )
 	return std::min(planarity_state.lowpt[left.low], planarity_state.lowpt[right.low]);
 }
 
