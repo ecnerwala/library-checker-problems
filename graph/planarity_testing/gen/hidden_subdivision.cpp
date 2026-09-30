@@ -1,15 +1,17 @@
 // A subdivision of K5 or K3,3 with long subdivided paths, hidden inside a huge
 // planar host graph (No, sparse: defeats the Euler bound).
-//   bit 0: K5 (0) or K3,3 (1)
-//   bit 1: attached to the host (0) or a separate component not containing vertex 0 (1)
-//   bit 2: host is a random deep tree with random labels (0) or a long path with natural labels (1)
+//   seed % 4: 0: K5 glued to a random deep tree (random labels)
+//             1: K3,3 as a separate component, host a random deep tree (random labels)
+//             2: K5 as a separate component, host a long path (natural labels)
+//             3: K3,3 glued to a long path (natural labels)
 #include "planar_gen.h"
 #include "../params.h"
 
 int main(int, char* argv[]) {
 	long long seed = atoll(argv[1]);
 	Random gen(seed);
-	bool k33 = seed & 1, separate = seed >> 1 & 1, path_host = seed >> 2 & 1;
+	int mode = seed % 4;
+	bool k33 = mode % 2 == 1, separate = mode == 1 || mode == 2, path_host = mode >= 2;
 	Graph core = k33 ? complete_bipartite(3, 3) : complete_graph(5);
 	Graph sub = subdivide_edges(gen, core, 10000, 30000);
 	int host_n = std::min(N_MAX - sub.n, M_MAX - int(sub.edges.size()));

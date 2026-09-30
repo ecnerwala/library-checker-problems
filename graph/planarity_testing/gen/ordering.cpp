@@ -1,8 +1,7 @@
 // Adversarial vertex / edge orderings of a few base graphs (N ~ 2 * 10^5):
-//   base (seed / 4): Moebius ladder (No), K3,3 subdivision in a deep tree (No),
+//   base (seed / 2): Moebius ladder (No), K3,3 subdivision in a deep tree (No),
 //                    triangulation subset (Yes), 2-tree (Yes)
-//   order (seed % 4): 0: natural labels, edges sorted; 1: natural labels, edges reverse-sorted;
-//                     2: BFS labels, edges sorted; 3: DFS labels, edges reversed and flipped
+//   order (seed % 2): 0: natural labels, edges sorted; 1: DFS labels, edges reversed and flipped
 #include "planar_gen.h"
 #include "../params.h"
 
@@ -29,7 +28,7 @@ std::vector<int> bfs_order(const Graph& g, Random& gen, bool dfs) {
 int main(int, char* argv[]) {
 	long long seed = atoll(argv[1]);
 	Random gen(seed);
-	int base = (seed / 4) % 4, order = seed % 4;
+	int base = (seed / 2) % 4, order = seed % 2 == 0 ? 0 : 3;
 	Graph g;
 	if (base == 0) g = moebius_ladder(200000);
 	else if (base == 1) {

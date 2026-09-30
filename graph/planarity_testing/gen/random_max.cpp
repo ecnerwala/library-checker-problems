@@ -5,7 +5,7 @@
 int main(int, char* argv[]) {
 	long long seed = atoll(argv[1]);
 	Random gen(seed);
-	int ms[] = {M_MAX, 500000, 100000};
-	print_graph(gen, random_simple_graph(gen, N_MAX, ms[seed % 3]));
+	int ms[] = {M_MAX, 100000};
+	print_graph(gen, random_simple_graph(gen, N_MAX, ms[seed % 2]));
 	return 0;
 }

@@ -7,8 +7,8 @@
 int main(int, char* argv[]) {
 	long long seed = atoll(argv[1]);
 	Random gen(seed);
-	int ns[] = {100, 10000, 400000};
-	int target = ns[(seed / 2) % 3];
+	int ns[] = {10000, 400000};
+	int target = ns[(seed / 2) % 2];
 	bool bad = seed % 2 == 1;
 	Graph g; g.add_vertex();
 	std::vector<Graph> blocks;

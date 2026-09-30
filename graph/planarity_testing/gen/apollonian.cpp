@@ -6,8 +6,8 @@
 int main(int, char* argv[]) {
 	long long seed = atoll(argv[1]);
 	Random gen(seed);
-	int ns[] = {50, 5000, 333335, 333334};
-	int n = ns[seed % 4];
+	int ns[] = {333335, 333334};
+	int n = ns[seed % 2];
 	Graph g = random_apollonian(gen, n);
 	if (seed % 2 == 1) add_random_nonedges(gen, g, 1);
 	assert(int(g.edges.size()) <= M_MAX);

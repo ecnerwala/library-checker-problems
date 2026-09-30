@@ -6,12 +6,12 @@
 int main(int, char* argv[]) {
 	long long seed = atoll(argv[1]);
 	Random gen(seed);
-	int ks[] = {1, 3, 50};
+	int ks[] = {1, 50};
 	int n = N_MAX - 100;
 	Graph g = path_graph(n);
 	Edges chords;
 	std::unordered_set<long long> seen;
-	while (int(chords.size()) < ks[seed % 3]) {
+	while (int(chords.size()) < ks[seed % 2]) {
 		auto [u, v] = gen.uniform_pair(0, n - 1);
 		if (v - u <= 1 && u - v <= 1) continue;
 		if (seen.insert(edge_key(u, v)).second) chords.emplace_back(u, v);

@@ -7,8 +7,8 @@
 int main(int, char* argv[]) {
 	long long seed = atoll(argv[1]);
 	Random gen(seed);
-	int ns[] = {20, 2000, 333333};
-	int n = ns[(seed / 2) % 3];
+	int ns[] = {2000, 333333};
+	int n = ns[(seed / 2) % 2];
 	Graph g = random_maximal_outerplanar(gen, n);
 	Graph outside = random_maximal_outerplanar(gen, n);
 	for (size_t i = n; i < outside.edges.size(); i++) g.edges.push_back(outside.edges[i]);

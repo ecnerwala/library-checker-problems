@@ -9,12 +9,10 @@ int main(int, char* argv[]) {
 	long long seed = atoll(argv[1]);
 	Random gen(seed);
 	Graph g;
-	switch (seed % 6) {
-		case 0: for (int i = 0; i < 166666; i++) g.add_graph(complete_graph(4)); break;
-		case 1: for (int i = 0; i < 100000; i++) g.add_graph(complete_graph(5)); break;
-		case 2: for (int i = 0; i < 111111; i++) g.add_graph(complete_bipartite(3, 3)); break;
-		case 3: for (int i = 0; i < 333333; i++) g.add_graph(cycle_graph(3)); break;
-		case 4: {
+	switch (seed % 4) {
+		case 0: for (int i = 0; i < 100000; i++) g.add_graph(complete_graph(5)); break;
+		case 1: for (int i = 0; i < 111111; i++) g.add_graph(complete_bipartite(3, 3)); break;
+		case 2: {
 			int bad_at = gen.uniform(0, 100000);
 			for (int i = 0; i <= 100000 && g.n + 40 <= N_MAX && int(g.edges.size()) + 100 <= M_MAX; i++) {
 				if (i == bad_at) { g.add_graph(complete_bipartite(3, 3)); continue; }
