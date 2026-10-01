@@ -40,3 +40,6 @@ No vendored file is modified.  All adaptations live in `../correct.cpp`:
 * a macro shim around the inclusion of `graphEmbed.c`, because
   `_gp_EmbedFlagsValid()` passes `(void *)&context` to
   `gp_FindExtension(graphP, int, void **)`, which is valid C but not C++.
+* `-Wdeprecated-declarations` is silenced around the inclusion of
+  `io/strbuf.c`, whose `sb_ConcatInt()` calls `sprintf()`, which Apple's SDK
+  marks deprecated (the suite is compiled with `-Werror`).

@@ -14,7 +14,11 @@
 #include "edge-addition-planarity-suite/c/graphLib/lowLevelUtils/apiutils.c"
 #include "edge-addition-planarity-suite/c/graphLib/lowLevelUtils/listcoll.c"
 #include "edge-addition-planarity-suite/c/graphLib/lowLevelUtils/stack.c"
+// Apple's SDK marks sprintf() deprecated; sb_ConcatInt() in strbuf.c uses it.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include "edge-addition-planarity-suite/c/graphLib/io/strbuf.c"
+#pragma GCC diagnostic pop
 #include "edge-addition-planarity-suite/c/graphLib/extensionSystem/graphExtensions.c"
 #include "edge-addition-planarity-suite/c/graphLib/graph.c"
 #include "edge-addition-planarity-suite/c/graphLib/graphDFSUtils.c"
