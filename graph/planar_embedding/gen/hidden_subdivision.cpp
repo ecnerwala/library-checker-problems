@@ -15,7 +15,8 @@ void append_case(std::string& buf, Random& gen, int mode, int host_n, int len_lo
 	int off = g.add_graph(sub);
 	if (!separate) {
 		// Glue: connect a random vertex of the subdivision to a random host vertex.
-		g.add_edge(gen.uniform(0, host_n - 1), off + gen.uniform(0, sub.n - 1));
+		int sub_v = off + gen.uniform(0, sub.n - 1), host_v = gen.uniform(0, host_n - 1);
+		g.add_edge(host_v, sub_v);
 	}
 	if (path_host) {
 		append_graph(buf, gen, g, false, false, false);
