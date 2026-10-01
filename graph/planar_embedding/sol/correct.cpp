@@ -46,40 +46,42 @@ int K4SEARCH_ID = 0;
 int _ReadPostprocess(graphP, char *) { return OK; }
 int _WritePostprocess(graphP, char **) { return OK; }
 
-
-#include <cstdio>
 #include <cstdlib>
 
+#include "fastio.h"
+
 int main() {
+    library_checker::Scanner sc(stdin);
+    library_checker::Printer pr(stdout);
     int T;
-    scanf("%d", &T);
+    sc.read(T);
     while (T--) {
         int N, M;
-        scanf("%d %d", &N, &M);
+        sc.read(N, M);
         graphP g = gp_New();
         if (M > 0 && gp_EnsureEdgeCapacity(g, M) != OK) exit(1);
         if (gp_EnsureVertexCapacity(g, N) != OK) exit(1);
         for (int i = 0; i < M; i++) {
             int a, b;
-            scanf("%d %d", &a, &b);
+            sc.read(a, b);
             if (gp_AddEdge(g, a, 0, b, 0) != OK) exit(1);
         }
         int r = gp_Embed(g, EMBEDFLAGS_PLANAR);
         if (r == OK) {
             // gp_Embed leaves the vertices in DFS order; restore the input numbering.
             if (gp_SortVertices(g) != OK) exit(1);
-            printf("Yes\n");
+            pr.writeln("Yes");
             for (int v = gp_LowerBoundVertices(g); v < gp_UpperBoundVertices(g); v++) {
                 bool first = true;
                 for (int e = gp_GetFirstEdge(g, v); gp_IsEdge(g, e); e = gp_GetNextEdge(g, e)) {
-                    if (!first) printf(" ");
+                    if (!first) pr.write(' ');
                     first = false;
-                    printf("%d", gp_GetNeighbor(g, e));
+                    pr.write(gp_GetNeighbor(g, e));
                 }
-                printf("\n");
+                pr.write('\n');
             }
         } else if (r == NONEMBEDDABLE) {
-            printf("No\n");
+            pr.writeln("No");
         } else {
             exit(1);
         }
