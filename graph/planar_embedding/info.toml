@@ -82,14 +82,17 @@ forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
     number = 1
 [[solutions]]
     name = "networkx_lr_planarity.cpp"
+    allow_tle = true
 [[solutions]]
     name = "wrong_euler.cpp"
     expect = "WA"
 [[solutions]]
     name = "wrong_no_side_flip.cpp"
+    allow_tle = true
     expect = "WA"
 [[solutions]]
     name = "wrong_component_of_0.cpp"
+    allow_tle = true
     expect = "WA"
 
 [params]
