@@ -2,6 +2,7 @@
 
 Upstream: https://github.com/graph-algorithms/edge-addition-planarity-suite
 Version:  tag `Version_5.1.0.0` (commit 30d63f809d4fcf947c597af1148fcaae7850ccf7, 2026-09-08)
+          https://github.com/graph-algorithms/edge-addition-planarity-suite/tree/Version_5.1.0.0/c/graphLib
 Author:   John M. Boyer
 License:  BSD-3-Clause, see `LICENSE.TXT`
 

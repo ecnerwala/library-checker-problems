@@ -1,8 +1,10 @@
 // Model solution: planar embedding by the Boyer-Myrvold edge addition
 // algorithm, using John M. Boyer's reference implementation, the Edge
-// Addition Planarity Suite, vendored unmodified (tag Version_5.1.0.0) in
-// edge-addition-planarity-suite/ -- see the README.md there for the list
-// of files and the adaptations made in this file.
+// Addition Planarity Suite, vendored unmodified in edge-addition-planarity-suite/
+// from tag Version_5.1.0.0:
+// https://github.com/graph-algorithms/edge-addition-planarity-suite/tree/Version_5.1.0.0/c/graphLib
+// See the README.md there for the list of files and the adaptations made in
+// this file.
 //
 // The library's .c files are compiled as C++ in this single translation unit.
 // Distributed under the BSD-3-Clause license, see

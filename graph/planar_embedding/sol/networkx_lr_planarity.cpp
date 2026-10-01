@@ -3,6 +3,7 @@
 // by statement from the iterative implementation in networkx 3.7,
 // networkx/algorithms/planarity.py (classes Interval, ConflictPair,
 // LRPlanarity and the parts of PlanarEmbedding that LRPlanarity uses).
+// https://github.com/networkx/networkx/blob/networkx-3.7/networkx/algorithms/planarity.py
 // The Python source is quoted in the comments directly above each translated
 // statement.
 //
