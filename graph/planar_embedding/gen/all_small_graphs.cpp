@@ -5,7 +5,6 @@
 // shuffle edges and edge orientations and shuffle the case order.
 #include <set>
 #include "planar_gen.h"
-#include "../params.h"
 
 namespace {
 

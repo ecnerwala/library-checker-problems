@@ -2,7 +2,6 @@
 // cycles, bridges) glued at cut vertices into a random block-cut tree (Yes).
 // One case per size is planar; the other replaces one random block by K5 or the Petersen graph (No).
 #include "planar_gen.h"
-#include "../params.h"
 
 Graph block_graph(Random& gen, int target, bool bad) {
 	Graph g; g.add_vertex();

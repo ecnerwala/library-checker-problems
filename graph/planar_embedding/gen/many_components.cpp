@@ -3,7 +3,6 @@
 //   1: random small planar components + exactly one K3,3 (No)
 //   2: many random small triangulations (Yes)
 #include "planar_gen.h"
-#include "../params.h"
 
 Graph components(Random& gen, int mode, int n_budget, int m_budget) {
 	Graph g;

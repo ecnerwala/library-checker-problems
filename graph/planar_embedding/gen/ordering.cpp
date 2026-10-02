@@ -2,7 +2,6 @@
 //   base: Moebius ladder (No), K3,3 subdivision in a deep tree (No), triangulation subset (Yes), 2-tree (Yes)
 //   order: natural labels with edges sorted; and DFS labels with edges reversed and flipped
 #include "planar_gen.h"
-#include "../params.h"
 
 std::vector<int> bfs_order(const Graph& g, Random& gen, bool dfs) {
 	std::vector<std::vector<int>> adj(g.n);

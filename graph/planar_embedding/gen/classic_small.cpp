@@ -1,7 +1,6 @@
 // Classic small named graphs (relabeled and shuffled).
 #include <cassert>
 #include "planar_gen.h"
-#include "../params.h"
 
 Graph minus_edge(Graph g, int idx) { g.edges.erase(g.edges.begin() + idx); return g; }
 Graph minus_vertex(Graph g, int v) {
