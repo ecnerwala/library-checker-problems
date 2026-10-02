@@ -7,7 +7,7 @@
 #include "planar_gen.h"
 #include "../params.h"
 
-void append_case(std::string& buf, Random& gen, int mode, int host_n, int len_lo, int len_hi) {
+void print_hidden_case(Random& gen, int mode, int host_n, int len_lo, int len_hi) {
 	bool k33 = mode % 2 == 1, separate = mode == 1 || mode == 2, path_host = mode >= 2;
 	Graph core = k33 ? complete_bipartite(3, 3) : complete_graph(5);
 	Graph sub = subdivide_edges(gen, core, len_lo, len_hi);
@@ -19,29 +19,27 @@ void append_case(std::string& buf, Random& gen, int mode, int host_n, int len_lo
 		g.add_edge(host_v, sub_v);
 	}
 	if (path_host) {
-		append_graph(buf, gen, g, false, false, false);
+		print_case(gen, g, false, false, false);
 	} else {
 		// Random labels, but vertex 0 must stay in the host.
 		auto perm = gen.perm<int>(g.n);
 		int host_v = gen.uniform(0, host_n - 1);
 		for (int i = 0; i < g.n; i++) if (perm[i] == 0) { std::swap(perm[i], perm[host_v]); break; }
 		for (auto& [u, v] : g.edges) { u = perm[u]; v = perm[v]; }
-		append_graph(buf, gen, g, false, true, true);
+		print_case(gen, g, false, true, true);
 	}
 }
 
 int main(int, char* argv[]) {
 	int64_t seed = atoll(argv[1]);
 	Random gen(seed);
-	std::string buf;
 	if (seed % 2 == 0) {
-		buf += "4\n";
-		for (int mode = 0; mode < 4; mode++) append_case(buf, gen, mode, 50000, 100, 300);
+		printf("4\n");
+		for (int mode = 0; mode < 4; mode++) print_hidden_case(gen, mode, 50000, 100, 300);
 	} else {
-		buf += "1\n";
+		printf("1\n");
 		int sub_n = 9 * 30000 + 6;  // upper bound on the size of the subdivision
-		append_case(buf, gen, 1, N_MAX - sub_n, 10000, 30000);
+		print_hidden_case(gen, 1, N_MAX - sub_n, 10000, 30000);
 	}
-	fwrite(buf.data(), 1, buf.size(), stdout);
 	return 0;
 }

@@ -14,7 +14,7 @@ int main(int, char* argv[]) {
 	while (int(chords.size()) < ks[seed % 2]) {
 		auto [u, v] = gen.uniform_pair(0, n - 1);
 		if (v - u <= 1 && u - v <= 1) continue;
-		if (seen.insert(edge_key(u, v)).second) chords.emplace_back(u, v);
+		if (seen.insert(edge_key(n, u, v)).second) chords.push_back({u, v});
 	}
 	for (auto e : chords) g.edges.push_back(e);
 	assert(int(g.edges.size()) <= M_MAX);

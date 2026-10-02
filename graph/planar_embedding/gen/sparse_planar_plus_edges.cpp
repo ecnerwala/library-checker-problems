@@ -5,7 +5,7 @@
 int main(int, char* argv[]) {
 	Random gen(atoll(argv[1]));
 	std::vector<Graph> gs;
-	std::pair<int, int> nk[] = {{1000, 2}, {50000, 1}, {100000, 1}, {100000, 3}};
+	std::array<int, 2> nk[] = {{1000, 2}, {50000, 1}, {100000, 1}, {100000, 3}};
 	for (int i = 0; i < 4; i++) {
 		auto [n, k] = nk[i];
 		Graph g;

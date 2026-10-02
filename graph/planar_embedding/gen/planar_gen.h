@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <cstdlib>
 #include <vector>
-#include <string>
 #include <array>
 #include <utility>
 #include <algorithm>
@@ -13,7 +12,7 @@
 #include <cassert>
 #include "random.h"
 
-using Edges = std::vector<std::pair<int, int>>;
+using Edges = std::vector<std::array<int, 2>>;
 
 // Simple graph under construction.
 struct Graph {
@@ -21,7 +20,7 @@ struct Graph {
 	Edges edges;
 	int add_vertex() { return n++; }
 	int add_vertices(int k) { int f = n; n += k; return f; }
-	void add_edge(int u, int v) { assert(u != v); assert(0 <= u && u < n && 0 <= v && v < n); edges.emplace_back(u, v); }
+	void add_edge(int u, int v) { assert(u != v); assert(0 <= u && u < n && 0 <= v && v < n); edges.push_back({u, v}); }
 	// Adds a path v_0 - v_1 - ... - v_{k-1} through the given vertices.
 	void add_path(const std::vector<int>& vs) { for (size_t i = 1; i < vs.size(); i++) add_edge(vs[i - 1], vs[i]); }
 	void add_cycle(const std::vector<int>& vs) { add_path(vs); if (vs.size() >= 3) add_edge(vs.back(), vs.front()); }
@@ -41,26 +40,26 @@ struct Graph {
 	}
 };
 
-inline int64_t edge_key(int u, int v) {
+// Key of the undirected edge {u, v} of a graph with n vertices.
+inline int64_t edge_key(int n, int u, int v) {
 	if (u > v) std::swap(u, v);
-	return int64_t(u) * 2000003 + v;
+	return int64_t(u) * n + v;
 }
 
 // Removes duplicate edges (in either orientation) and self-loops.
 inline void dedup(Graph& g) {
 	Edges out;
 	std::unordered_set<int64_t> seen;
-	seen.reserve(g.edges.size() * 2);
 	for (auto [u, v] : g.edges) {
 		if (u == v) continue;
-		if (seen.insert(edge_key(u, v)).second) out.emplace_back(u, v);
+		if (seen.insert(edge_key(g.n, u, v)).second) out.push_back({u, v});
 	}
 	g.edges = out;
 }
 
-// Appends one case (the graph) to buf. By default, relabels vertices randomly,
+// Prints one case (the graph). By default, relabels vertices randomly,
 // shuffles the edge order and randomly flips edge orientations.
-inline void append_graph(std::string& buf, Random& gen, Graph g, bool relabel = true, bool shuffle_edges = true, bool flip = true) {
+inline void print_case(Random& gen, Graph g, bool relabel = true, bool shuffle_edges = true, bool flip = true) {
 	if (relabel) {
 		auto perm = gen.perm<int>(g.n);
 		for (auto& [u, v] : g.edges) { u = perm[u]; v = perm[v]; }
@@ -69,26 +68,14 @@ inline void append_graph(std::string& buf, Random& gen, Graph g, bool relabel = 
 	if (flip) {
 		for (auto& [u, v] : g.edges) if (gen.uniform_bool()) std::swap(u, v);
 	}
-	char tmp[32];
-	int len = snprintf(tmp, sizeof(tmp), "%d %d\n", g.n, int(g.edges.size()));
-	buf.append(tmp, len);
-	for (auto [u, v] : g.edges) {
-		len = snprintf(tmp, sizeof(tmp), "%d %d\n", u, v);
-		buf.append(tmp, len);
-	}
+	printf("%d %d\n", g.n, int(g.edges.size()));
+	for (auto [u, v] : g.edges) printf("%d %d\n", u, v);
 }
 
-// Prints a test file consisting of the given cases (see append_graph).
+// Prints a test file consisting of the given cases (see print_case).
 inline void print_graphs(Random& gen, const std::vector<Graph>& gs, bool relabel = true, bool shuffle_edges = true, bool flip = true) {
-	std::string buf;
-	size_t total = 0;
-	for (const auto& g : gs) total += g.edges.size();
-	buf.reserve(total * 16 + gs.size() * 16);
-	char tmp[32];
-	int len = snprintf(tmp, sizeof(tmp), "%d\n", int(gs.size()));
-	buf.append(tmp, len);
-	for (const auto& g : gs) append_graph(buf, gen, g, relabel, shuffle_edges, flip);
-	fwrite(buf.data(), 1, buf.size(), stdout);
+	printf("%d\n", int(gs.size()));
+	for (const auto& g : gs) print_case(gen, g, relabel, shuffle_edges, flip);
 }
 
 // Prints a test file with a single case.
@@ -295,12 +282,11 @@ inline Graph random_triangulation(Random& gen, int n, int64_t flips) {
 	// Start from a "double fan": vertices 1..n-2 form a path, all adjacent to 0 (one side) and n-1 (other side).
 	// Faces are oriented consistently; apex[(u,v)] is the third vertex of the face on the left of u->v.
 	std::unordered_map<int64_t, int> apex;
-	auto dkey = [](int u, int v) { return int64_t(u) * 2000003 + v; };
+	auto dkey = [n](int u, int v) { return int64_t(u) * n + v; };
 	auto set_face = [&](int a, int b, int c) {
 		apex[dkey(a, b)] = c; apex[dkey(b, c)] = a; apex[dkey(c, a)] = b;
 	};
 	Edges edges;
-	apex.reserve(6 * n + 10);
 	if (n == 3) {
 		set_face(0, 1, 2); set_face(0, 2, 1);
 		edges = {{0, 1}, {1, 2}, {2, 0}};
@@ -313,9 +299,9 @@ inline Graph random_triangulation(Random& gen, int n, int64_t flips) {
 		// Close up at both ends: faces (0, n-2, t) and (t, 1, 0)
 		set_face(0, n - 2, t);
 		set_face(t, 1, 0);
-		edges.emplace_back(0, t);
-		for (int i = 1; i <= n - 2; i++) { edges.emplace_back(0, i); edges.emplace_back(t, i); }
-		for (int i = 1; i + 1 <= n - 2; i++) edges.emplace_back(i, i + 1);
+		edges.push_back({0, t});
+		for (int i = 1; i <= n - 2; i++) { edges.push_back({0, i}); edges.push_back({t, i}); }
+		for (int i = 1; i + 1 <= n - 2; i++) edges.push_back({i, i + 1});
 	}
 	for (int64_t f = 0; f < flips; f++) {
 		int ei = gen.uniform<int>(0, int(edges.size()) - 1);
@@ -338,14 +324,14 @@ inline Graph random_triangulation(Random& gen, int n, int64_t flips) {
 // Random maximal outerplanar graph: the cycle 0..n-1 plus a random triangulation of the polygon.
 inline Graph random_maximal_outerplanar(Random& gen, int n) {
 	Graph g = cycle_graph(n);
-	std::vector<std::pair<int, int>> stk;
-	if (n >= 4) stk.emplace_back(0, n - 1);
+	std::vector<std::array<int, 2>> stk;
+	if (n >= 4) stk.push_back({0, n - 1});
 	while (!stk.empty()) {
 		auto [l, r] = stk.back(); stk.pop_back();
 		if (r - l < 2) continue;
 		int m = gen.uniform(l + 1, r - 1);
-		if (m != l + 1) { g.add_edge(l, m); stk.emplace_back(l, m); }
-		if (m != r - 1) { g.add_edge(m, r); stk.emplace_back(m, r); }
+		if (m != l + 1) { g.add_edge(l, m); stk.push_back({l, m}); }
+		if (m != r - 1) { g.add_edge(m, r); stk.push_back({m, r}); }
 	}
 	return g;
 }
@@ -382,12 +368,11 @@ inline Graph random_edge_sample(Random& gen, Graph g, int keep) {
 // Adds `k` random new edges that are not already present (and not loops).
 inline void add_random_nonedges(Random& gen, Graph& g, int k) {
 	std::unordered_set<int64_t> seen;
-	seen.reserve(g.edges.size() * 2 + 16);
-	for (auto [u, v] : g.edges) seen.insert(edge_key(u, v));
+	for (auto [u, v] : g.edges) seen.insert(edge_key(g.n, u, v));
 	assert(g.n >= 2);
 	while (k > 0) {
 		auto [u, v] = gen.uniform_pair(0, g.n - 1);
-		if (seen.insert(edge_key(u, v)).second) { g.add_edge(u, v); k--; }
+		if (seen.insert(edge_key(g.n, u, v)).second) { g.add_edge(u, v); k--; }
 	}
 }
 // Random simple graph with n vertices and m edges (m <= n(n-1)/2).
