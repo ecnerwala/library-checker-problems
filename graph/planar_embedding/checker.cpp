@@ -63,6 +63,8 @@ void read_embedding(const Graph& g, InStream& stream, int tc) {
   }
   sort(listed.begin(), listed.end());
   sort(graph_darts.begin(), graph_darts.end());
+  // Each vertex lists exactly deg(v) darts, so listed[i][0] == graph_darts[i][0] for all i
+  // and the two lists match if and only if the heads agree.
   vector<int> pos(2 * E);  // pos[2 * e + side]: the listed dart equal to it
   for (int i = 0; i < 2 * E; i++) {
     auto [v, w, p] = listed[i];
