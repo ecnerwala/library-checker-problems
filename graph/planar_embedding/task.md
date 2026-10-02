@@ -62,7 +62,7 @@ $a_{M - 1}$ $b_{M - 1}$
 @{lang.en}
 For each case, if the graph is not planar, print `No`.
 
-Otherwise print `Yes`, followed by $N$ lines. The $v$-th line ($0 \leq v \lt N$) must contain the $\deg(v)$ neighbors of vertex $v$ in the cyclic order in which they appear around $v$ in some planar drawing of the graph (all vertices must use the same rotational direction within each connected component). The line for an isolated vertex is empty.
+Otherwise print `Yes`, followed by $N$ lines. Fix a planar drawing of the graph. The $v$-th line ($0 \leq v \lt N$) must contain the $\deg(v)$ neighbors of vertex $v$ in clockwise order around $v$ in that drawing. Print exactly $N$ lines even if some vertices are isolated: the line for a vertex with $\deg(v) = 0$ must be an empty line.
 
 ```
 Yes
@@ -76,7 +76,7 @@ If there are multiple valid embeddings, any of them is accepted.
 @{lang.ja}
 各ケースについて，グラフが平面グラフでなければ `No` を出力してください．
 
-平面グラフならば `Yes` を出力し，続けて $N$ 行を出力してください．$v$ 行目（$0 \leq v \lt N$）には，頂点 $v$ の $\deg(v)$ 個の隣接頂点を，ある平面描画において頂点 $v$ の周りに現れる巡回順序で出力してください（各連結成分の中では，全ての頂点で同じ回転方向を用いてください）．孤立点の行は空行です．
+平面グラフならば `Yes` を出力し，続けて $N$ 行を出力してください．グラフの平面描画を 1 つ固定します．$v$ 行目（$0 \leq v \lt N$）には，頂点 $v$ の $\deg(v)$ 個の隣接頂点を，その描画において頂点 $v$ の周りに時計回りに現れる順に出力してください．孤立点があっても必ず $N$ 行を出力してください．$\deg(v) = 0$ の頂点の行は空行として出力してください．
 
 ```
 Yes
