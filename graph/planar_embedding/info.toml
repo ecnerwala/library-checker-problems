@@ -12,46 +12,19 @@ forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
     name = "many_tiny.cpp"
     number = 1
 [[tests]]
-    name = "isolated_max.cpp"
-    number = 1
+    name = "simple_max.cpp"
+    number = 3
 [[tests]]
-    name = "path_max.cpp"
-    number = 1
-[[tests]]
-    name = "cycle_max.cpp"
-    number = 1
-[[tests]]
-    name = "star_max.cpp"
-    number = 1
-[[tests]]
-    name = "classic_small.cpp"
+    name = "classic.cpp"
     number = 1
 [[tests]]
     name = "complete.cpp"
     number = 3
 [[tests]]
-    name = "ladder_family.cpp"
-    number = 1
-[[tests]]
-    name = "grid.cpp"
-    number = 1
-[[tests]]
     name = "triangulation.cpp"
     number = 2
 [[tests]]
-    name = "apollonian.cpp"
-    number = 1
-[[tests]]
-    name = "sparse_planar_plus_edges.cpp"
-    number = 1
-[[tests]]
-    name = "outerplanar.cpp"
-    number = 1
-[[tests]]
-    name = "two_tree.cpp"
-    number = 1
-[[tests]]
-    name = "cactus.cpp"
+    name = "planar_families.cpp"
     number = 1
 [[tests]]
     name = "hidden_subdivision.cpp"
@@ -66,19 +39,13 @@ forum = "https://github.com/yosupo06/library-checker-problems/issues/649"
     name = "random_max.cpp"
     number = 1
 [[tests]]
+    name = "random_planar.cpp"
+    number = 4
+[[tests]]
     name = "chords.cpp"
     number = 2
 [[tests]]
-    name = "deep_path_chords.cpp"
-    number = 1
-[[tests]]
     name = "block_cut.cpp"
-    number = 1
-[[tests]]
-    name = "many_components.cpp"
-    number = 1
-[[tests]]
-    name = "ordering.cpp"
     number = 1
 [[solutions]]
     name = "networkx_lr_planarity.cpp"
