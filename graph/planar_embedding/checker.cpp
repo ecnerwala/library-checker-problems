@@ -33,28 +33,34 @@ int read_yes_no(InStream& stream) {
 
 // Reads a rotation system (for each vertex, its neighbors in cyclic order) and
 // checks that it is a planar embedding.
-// Dart 2 * e + side is edge e directed away from ends[e][side]; nxt[d] is the
-// dart after d around its tail, so the dart after d on its face is nxt[d ^ 1].
+// Dart p is the p-th listed neighbor; nxt[p] is the dart after p around its tail
+// and twin[p] the reverse dart, so the dart after p on its face is nxt[twin[p]].
 void read_embedding(const Graph& g, InStream& stream, int tc) {
   int V = g.V, E = g.E;
   vector<int> deg(V, 0);
   for (auto [a, b] : g.ends) deg[a]++, deg[b]++;
 
-  // The graph's darts as (tail, head, dart) and the listed ones as (tail, head, position)
-  vector<array<int, 3>> graph_darts(2 * E), listed(2 * E);
+  // (tail, head, dart) for the listed darts and (tail, head, 2 * e + side) for the graph's
+  vector<array<int, 3>> listed(2 * E), graph_darts(2 * E);
+  vector<int> nxt(2 * E), twin(2 * E);
+  if (!stream.seekEoln()) stream.quitf(_pe, "case %d: expected end of line after Yes", tc);
+  for (int v = 0, p = 0; v < V; v++) {
+    for (int i = 0; i < deg[v]; i++, p++) {
+      listed[p] = {v, stream.readInt(0, V - 1, "neighbor"), p};
+      nxt[p] = i + 1 < deg[v] ? p + 1 : p - i;
+    }
+    if (!stream.seekEoln()) {
+      stream.quitf(_pe, "case %d: expected end of line after the neighbors of vertex %d", tc, v);
+    }
+  }
   for (int e = 0; e < E; e++) {
     for (int side = 0; side < 2; side++) {
       graph_darts[2 * e + side] = {g.ends[e][side], g.ends[e][side ^ 1], 2 * e + side};
     }
   }
-  for (int v = 0, p = 0; v < V; v++) {
-    for (int i = 0; i < deg[v]; i++, p++) {
-      listed[p] = {v, stream.readInt(0, V - 1, "neighbor"), p};
-    }
-  }
-  sort(graph_darts.begin(), graph_darts.end());
   sort(listed.begin(), listed.end());
-  vector<int> dart_at(2 * E);
+  sort(graph_darts.begin(), graph_darts.end());
+  vector<int> pos(2 * E);  // pos[2 * e + side]: the listed dart equal to it
   for (int i = 0; i < 2 * E; i++) {
     auto [v, w, p] = listed[i];
     if (w < graph_darts[i][1]) {
@@ -65,12 +71,9 @@ void read_embedding(const Graph& g, InStream& stream, int tc) {
     } else if (w > graph_darts[i][1]) {
       stream.quitf(_wa, "case %d: vertex %d is missing around vertex %d", tc, graph_darts[i][1], v);
     }
-    dart_at[p] = graph_darts[i][2];
+    pos[graph_darts[i][2]] = p;
   }
-  vector<int> nxt(2 * E);
-  for (int v = 0, p = 0; v < V; p += deg[v], v++) {
-    for (int i = 0; i < deg[v]; i++) nxt[dart_at[p + i]] = dart_at[p + (i + 1) % deg[v]];
-  }
+  for (int d = 0; d < 2 * E; d++) twin[pos[d]] = pos[d ^ 1];
 
   // F = 2C + E - V, over the components with at least one edge
   int expected_face_cycles = 0;
@@ -109,7 +112,7 @@ void read_embedding(const Graph& g, InStream& stream, int tc) {
     for (int d = 0; d < 2 * E; d++) {
       if (face_vis[d]) continue;
       num_face_cycles++;
-      for (int cur = d; !face_vis[cur]; cur = nxt[cur ^ 1]) face_vis[cur] = true;
+      for (int cur = d; !face_vis[cur]; cur = nxt[twin[cur]]) face_vis[cur] = true;
     }
   }
   // Non-planar rotation systems have fewer faces.
