@@ -46,11 +46,14 @@ void read_embedding(const Graph& g, InStream& stream, int tc) {
   if (!stream.seekEoln()) stream.quitf(_pe, "case %d: expected end of line after Yes", tc);
   for (int v = 0, p = 0; v < V; v++) {
     for (int i = 0; i < deg[v]; i++, p++) {
+      if (stream.seekEoln()) {
+        stream.quitf(_pe, "case %d: expected %d neighbors on the line of vertex %d, found %d", tc, deg[v], v, i);
+      }
       listed[p] = {v, stream.readInt(0, V - 1, "neighbor"), p};
       nxt[p] = i + 1 < deg[v] ? p + 1 : p - i;
     }
     if (!stream.seekEoln()) {
-      stream.quitf(_pe, "case %d: expected end of line after the neighbors of vertex %d", tc, v);
+      stream.quitf(_pe, "case %d: expected %d neighbors on the line of vertex %d, found more", tc, deg[v], v);
     }
   }
   for (int e = 0; e < E; e++) {
