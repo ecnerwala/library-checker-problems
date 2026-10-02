@@ -47,14 +47,14 @@ $T$
 $N$ $M$
 $a_0$ $b_0$
 $a_1$ $b_1$
-:
+$\vdots$
 $a_{M - 1}$ $b_{M - 1}$
 $N$ $M$
 $a_0$ $b_0$
 $a_1$ $b_1$
-:
+$\vdots$
 $a_{M - 1}$ $b_{M - 1}$
-:
+$\vdots$
 ```
 
 ## @{keyword.output}
