@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <array>
 #include <string>
-#include <utility>
 #include <vector>
 #include "testlib.h"
 
@@ -10,8 +9,6 @@ using namespace std;
 struct Graph {
   int V, E;
   vector<array<int, 2>> ends;  // ends[e]: endpoints of edge e
-  vector<int> start;           // adj[start[v], start[v + 1]) is the adjacency of v
-  vector<pair<int, int>> adj;  // (neighbor, edge), sorted by neighbor
 };
 
 Graph read_graph(InStream& stream) {
@@ -19,23 +16,9 @@ Graph read_graph(InStream& stream) {
   g.V = stream.readInt();
   g.E = stream.readInt();
   g.ends.resize(g.E);
-  g.start.assign(g.V + 1, 0);
   for (auto& [a, b] : g.ends) {
     a = stream.readInt();
     b = stream.readInt();
-    g.start[a + 1]++;
-    g.start[b + 1]++;
-  }
-  for (int v = 0; v < g.V; v++) g.start[v + 1] += g.start[v];
-  g.adj.resize(2 * g.E);
-  vector<int> pos(g.start.begin(), g.start.end() - 1);
-  for (int e = 0; e < g.E; e++) {
-    auto [a, b] = g.ends[e];
-    g.adj[pos[a]++] = {b, e};
-    g.adj[pos[b]++] = {a, e};
-  }
-  for (int v = 0; v < g.V; v++) {
-    sort(g.adj.begin() + g.start[v], g.adj.begin() + g.start[v + 1]);
   }
   return g;
 }
@@ -54,28 +37,39 @@ int read_yes_no(InStream& stream) {
 // dart after d around its tail, so the dart after d on its face is nxt[d ^ 1].
 void read_embedding(const Graph& g, InStream& stream, int tc) {
   int V = g.V, E = g.E;
-  vector<int> nxt(2 * E);
-  vector<bool> listed(2 * E, false);
-  for (int v = 0; v < V; v++) {
-    int first = -1, prev = -1;
-    for (int i = g.start[v]; i < g.start[v + 1]; i++) {
-      int w = stream.readInt(0, V - 1, "neighbor");
-      auto lo = g.adj.begin() + g.start[v], hi = g.adj.begin() + g.start[v + 1];
-      auto it = lower_bound(lo, hi, pair(w, -1));
-      if (it == hi || it->first != w) {
-        stream.quitf(_wa, "case %d: vertex %d is not adjacent to vertex %d", tc, w, v);
-      }
-      int e = it->second;
-      int d = 2 * e + (g.ends[e][0] == v ? 0 : 1);
-      if (listed[d]) {
+  vector<int> deg(V, 0);
+  for (auto [a, b] : g.ends) deg[a]++, deg[b]++;
+
+  // The graph's darts as (tail, head, dart) and the listed ones as (tail, head, position)
+  vector<array<int, 3>> graph_darts(2 * E), listed(2 * E);
+  for (int e = 0; e < E; e++) {
+    for (int side = 0; side < 2; side++) {
+      graph_darts[2 * e + side] = {g.ends[e][side], g.ends[e][side ^ 1], 2 * e + side};
+    }
+  }
+  for (int v = 0, p = 0; v < V; v++) {
+    for (int i = 0; i < deg[v]; i++, p++) {
+      listed[p] = {v, stream.readInt(0, V - 1, "neighbor"), p};
+    }
+  }
+  sort(graph_darts.begin(), graph_darts.end());
+  sort(listed.begin(), listed.end());
+  vector<int> dart_at(2 * E);
+  for (int i = 0; i < 2 * E; i++) {
+    auto [v, w, p] = listed[i];
+    if (w < graph_darts[i][1]) {
+      if (i > 0 && listed[i - 1][0] == v && listed[i - 1][1] == w) {
         stream.quitf(_wa, "case %d: vertex %d listed twice around vertex %d", tc, w, v);
       }
-      listed[d] = true;
-      if (prev == -1) first = d;
-      else nxt[prev] = d;
-      prev = d;
+      stream.quitf(_wa, "case %d: vertex %d is not adjacent to vertex %d", tc, w, v);
+    } else if (w > graph_darts[i][1]) {
+      stream.quitf(_wa, "case %d: vertex %d is missing around vertex %d", tc, graph_darts[i][1], v);
     }
-    if (prev != -1) nxt[prev] = first;
+    dart_at[p] = graph_darts[i][2];
+  }
+  vector<int> nxt(2 * E);
+  for (int v = 0, p = 0; v < V; p += deg[v], v++) {
+    for (int i = 0; i < deg[v]; i++) nxt[dart_at[p + i]] = dart_at[p + (i + 1) % deg[v]];
   }
 
   // F = 2C + E - V, over the components with at least one edge
