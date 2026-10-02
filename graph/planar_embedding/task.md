@@ -60,33 +60,35 @@ $a_{M - 1}$ $b_{M - 1}$
 ## @{keyword.output}
 
 @{lang.en}
-For each case, if the graph is not planar, print `No`.
 
-Otherwise print `Yes`, followed by $N$ lines. Fix a planar drawing of the graph. The $v$-th line ($0 \leq v \lt N$) must contain the $\deg(v)$ neighbors of vertex $v$ in clockwise order around $v$ in that drawing. Print exactly $N$ lines even if some vertices are isolated: the line for a vertex with $\deg(v) = 0$ must be an empty line.
+For each case, if the graph is not planar, print `No`. Otherwise, print a planar embedding in the following format.
 
-```
-Yes
-$c_{0, 0}$ $c_{0, 1}$ ... $c_{0, \deg(0) - 1}$
-$c_{1, 0}$ $c_{1, 1}$ ... $c_{1, \deg(1) - 1}$
-:
-$c_{N - 1, 0}$ $c_{N - 1, 1}$ ... $c_{N - 1, \deg(N - 1) - 1}$
-```
-
-If there are multiple valid embeddings, any of them is accepted.
 @{lang.ja}
-各ケースについて，グラフが平面グラフでなければ `No` を出力してください．
 
-平面グラフならば `Yes` を出力し，続けて $N$ 行を出力してください．グラフの平面描画を 1 つ固定します．$v$ 行目（$0 \leq v \lt N$）には，頂点 $v$ の $\deg(v)$ 個の隣接頂点を，その描画において頂点 $v$ の周りに時計回りに現れる順に出力してください．孤立点があっても必ず $N$ 行を出力してください．$\deg(v) = 0$ の頂点の行は空行として出力してください．
+各ケースについて，グラフが平面グラフでなければ `No` を出力してください．平面グラフならば，平面埋め込みを次の形式で出力してください．
 
-```
+@{lang.end}
+
+~~~
 Yes
-$c_{0, 0}$ $c_{0, 1}$ ... $c_{0, \deg(0) - 1}$
-$c_{1, 0}$ $c_{1, 1}$ ... $c_{1, \deg(1) - 1}$
-:
-$c_{N - 1, 0}$ $c_{N - 1, 1}$ ... $c_{N - 1, \deg(N - 1) - 1}$
-```
+$c_{0, 0}$ $c_{0, 1}$ $\ldots$ $c_{0, \deg(0) - 1}$
+$c_{1, 0}$ $c_{1, 1}$ $\ldots$ $c_{1, \deg(1) - 1}$
+$\vdots$
+$c_{N - 1, 0}$ $c_{N - 1, 1}$ $\ldots$ $c_{N - 1, \deg(N - 1) - 1}$
+~~~
 
-条件を満たす埋め込みが複数ある場合，どれを出力しても正解となります．
+@{lang.en}
+
+- $c_{v, 0}, c_{v, 1}, \ldots, c_{v, \deg(v) - 1}$ are the neighbors of vertex $v$ in clockwise order around $v$, in some fixed planar drawing of the graph.
+- If $\deg(v) = 0$, print an empty line.
+- If there are multiple solutions, print any of them.
+
+@{lang.ja}
+
+- $c_{v, 0}, c_{v, 1}, \ldots, c_{v, \deg(v) - 1}$ は，グラフのある平面描画を固定したときに，頂点 $v$ の隣接頂点を $v$ の周りに時計回りに並べたものです．
+- $\deg(v) = 0$ の場合は空行を出力してください．
+- 正しい出力が複数存在する場合は，どれを出力しても構いません．
+
 @{lang.end}
 
 ## @{keyword.sample}
